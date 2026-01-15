@@ -39,9 +39,8 @@ export default function Home() {
                   <div className="text-base font-semibold">App Store</div>
                 </div>
               </a>
-              <a
-                href="#"
-                className="group flex items-center gap-3 rounded-2xl bg-[#1d1d1f] px-6 py-4 text-white shadow-lg shadow-black/5 transition hover:scale-[1.02] hover:shadow-xl dark:bg-white dark:text-[#1d1d1f]"
+              <div
+                className="flex cursor-not-allowed items-center gap-3 rounded-2xl bg-[#1d1d1f] px-6 py-4 text-white opacity-50 shadow-lg shadow-black/5 dark:bg-white dark:text-[#1d1d1f]"
               >
                 <svg
                   className="h-8 w-8"
@@ -51,10 +50,10 @@ export default function Home() {
                   <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.25-.84-.76-.84-1.35zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm3.35-4.31c.34.27.56.69.56 1.19s-.22.92-.56 1.19l-2.11 1.24-2.5-2.5 2.5-2.5 2.11 1.38zm-3.35-4.31l-2.27 2.27-8.49-8.49 10.76 6.22z" />
                 </svg>
                 <div className="text-left">
-                  <div className="text-xs opacity-70">Get it on</div>
+                  <div className="text-xs opacity-70">Coming soon to</div>
                   <div className="text-base font-semibold">Google Play</div>
                 </div>
-              </a>
+              </div>
             </div>
           </div>
         </section>

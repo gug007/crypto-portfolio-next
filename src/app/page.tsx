@@ -6,10 +6,9 @@ export default function Home() {
         <section className="px-6 py-20 md:py-32">
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <h1 className="text-5xl font-semibold leading-tight tracking-tight md:text-7xl md:leading-tight">
-              Track your crypto
-              <br />
+              Crypto portfolio <br />
               <span className="bg-gradient-to-r from-[#0071e3] to-[#00c7be] bg-clip-text text-transparent dark:from-[#2997ff] dark:to-[#64d2ff]">
-                effortlessly
+                tracker app
               </span>
             </h1>
 

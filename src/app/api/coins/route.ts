@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
-  const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false';
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const vsCurrency = searchParams.get('vs_currency') || 'usd';
+  
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&order=market_cap_desc&per_page=250&page=1&sparkline=false`;
 
   try {
     const res = await fetch(url, {

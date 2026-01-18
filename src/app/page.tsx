@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
@@ -276,12 +277,12 @@ export default function Home() {
               <span className="font-medium text-foreground">Crypto Portfolio</span>
             </div>
             <div className="flex gap-8 text-sm text-secondary">
-              <a
-                href="#"
+              <Link
+                href="/privacy-policy"
                 className="transition hover:text-foreground"
               >
                 Privacy Policy
-              </a>
+              </Link>
               <a
                 href="#"
                 className="transition hover:text-foreground"
@@ -289,10 +290,10 @@ export default function Home() {
                 Terms of Service
               </a>
               <a
-                href="#"
+                href="mailto:support@cryptoportfolio.org"
                 className="transition hover:text-foreground"
               >
-                Contact
+                support@cryptoportfolio.org
               </a>
             </div>
             <div className="text-sm text-secondary">

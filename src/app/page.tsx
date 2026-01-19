@@ -80,7 +80,7 @@ export default function Home() {
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start lg:justify-between">
               {/* Phone */}
               <div className="relative w-full max-w-[280px] flex-shrink-0">
-                <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10">
+                <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
                   <div className="relative overflow-hidden rounded-[2.5rem] bg-black">
                     <Image
                       src="/iPhone-light.png"

@@ -87,7 +87,7 @@ export default function Home() {
                       alt="App Screenshot"
                       width={1206}
                       height={2622}
-                      className="w-full h-auto drop-shadow-2xl dark:hidden"
+                      className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[3rem] overflow-hidden"
                       priority
                     />
                     <Image
@@ -95,7 +95,7 @@ export default function Home() {
                       alt="App Screenshot"
                       width={1206}
                       height={2622}
-                      className="w-full h-auto drop-shadow-2xl hidden dark:block"
+                      className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[3rem] overflow-hidden"
                       priority
                     />
                   </div>

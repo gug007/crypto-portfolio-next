@@ -87,7 +87,15 @@ export default function Home() {
                       alt="App Screenshot"
                       width={1206}
                       height={2622}
-                      className="w-full h-auto drop-shadow-2xl"
+                      className="w-full h-auto drop-shadow-2xl dark:hidden"
+                      priority
+                    />
+                    <Image
+                      src="/iPhone-dark.png"
+                      alt="App Screenshot"
+                      width={1206}
+                      height={2622}
+                      className="w-full h-auto drop-shadow-2xl hidden dark:block"
                       priority
                     />
                   </div>
@@ -189,20 +197,14 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-                <svg
-                  className="h-4 w-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                  />
-                </svg>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent overflow-hidden">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  width={32}
+                  height={32}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <span className="font-medium text-foreground">Crypto Portfolio</span>
             </div>

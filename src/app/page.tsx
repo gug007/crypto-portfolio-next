@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
@@ -79,87 +80,16 @@ export default function Home() {
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start lg:justify-between">
               {/* Phone */}
               <div className="relative w-full max-w-[280px] flex-shrink-0">
-                <div className="relative rounded-[3rem] bg-[#1d1d1f] p-3 shadow-2xl dark:bg-[#2d2d2f]">
-                  <div className="absolute left-1/2 top-4 h-6 w-24 -translate-x-1/2 rounded-full bg-black"></div>
-                  <div className="rounded-[2.5rem] bg-background p-6 pt-10">
-                    {/* Mock App Screen */}
-                    <div className="mb-2 text-sm font-medium text-secondary">
-                      Portfolio Value
-                    </div>
-                    <div className="mb-1 text-4xl font-semibold tracking-tight text-foreground">
-                      $24,831.52
-                    </div>
-                    <div className="mb-8 flex items-center gap-1 text-sm font-medium text-green-600">
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 10l7-7m0 0l7 7m-7-7v18"
-                        />
-                      </svg>
-                      +12.4% today
-                    </div>
-
-                    {/* Mock Coin List */}
-                    <div className="space-y-3">
-                      {[
-                        {
-                          name: "Bitcoin",
-                          symbol: "BTC",
-                          price: "$43,250",
-                          change: "+2.4%",
-                          color: "bg-orange-500",
-                        },
-                        {
-                          name: "Ethereum",
-                          symbol: "ETH",
-                          price: "$2,280",
-                          change: "+5.1%",
-                          color: "bg-blue-500",
-                        },
-                        {
-                          name: "Solana",
-                          symbol: "SOL",
-                          price: "$98.42",
-                          change: "+8.7%",
-                          color:
-                            "bg-gradient-to-br from-purple-500 to-blue-500",
-                        },
-                      ].map((coin) => (
-                        <div
-                          key={coin.symbol}
-                          className="flex items-center justify-between rounded-2xl bg-surface p-4"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`h-10 w-10 rounded-full ${coin.color}`}
-                            />
-                            <div>
-                              <div className="font-medium text-foreground">
-                                {coin.name}
-                              </div>
-                              <div className="text-sm text-secondary">
-                                {coin.symbol}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-medium text-foreground">
-                              {coin.price}
-                            </div>
-                            <div className="text-sm font-medium text-green-600">
-                              {coin.change}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10">
+                  <div className="relative overflow-hidden rounded-[2.5rem] bg-black">
+                    <Image
+                      src="/iPhone-light.png"
+                      alt="App Screenshot"
+                      width={1206}
+                      height={2622}
+                      className="w-full h-auto drop-shadow-2xl"
+                      priority
+                    />
                   </div>
                 </div>
               </div>
@@ -234,7 +164,7 @@ export default function Home() {
                   ].map((feature) => (
                     <div
                       key={feature.title}
-                      className="flex gap-4 rounded-2xl bg-background p-5 shadow-sm ring-1 ring-border"
+                      className="flex gap-4 rounded-2xl bg-background p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
                     >
                       <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
                         {feature.icon}
@@ -255,7 +185,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-surface transition-colors duration-300">
+      <footer className="border-t border-black/5 bg-surface transition-colors duration-300 dark:border-white/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-3">
@@ -290,10 +220,10 @@ export default function Home() {
                 Terms of Service
               </a>
               <a
-                href="mailto:support@cryptoportfolio.org"
+                href="mailto:support@crypto-portfolio.org"
                 className="transition hover:text-foreground"
               >
-                support@cryptoportfolio.org
+                support@crypto-portfolio.org
               </a>
             </div>
             <div className="text-sm text-secondary">

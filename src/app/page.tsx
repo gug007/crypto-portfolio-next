@@ -222,10 +222,10 @@ export default function Home() {
                 Terms of Service
               </a>
               <a
-                href="mailto:support@crypto-portfolio.org"
+                href="mailto:support@crypto-portfolio-tracker.app"
                 className="transition hover:text-foreground"
               >
-                support@crypto-portfolio.org
+                support@crypto-portfolio-tracker.app
               </a>
             </div>
             <div className="text-sm text-secondary">

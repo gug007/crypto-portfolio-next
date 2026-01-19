@@ -85,7 +85,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">6. Contact Us</h2>
             <p className="leading-relaxed text-secondary-foreground/80">
-              If you have questions or comments about this policy, you may email us at support@crypto-portfolio.org
+              If you have questions or comments about this policy, you may email us at support@crypto-portfolio-tracker.app
             </p>
           </section>
         </div>

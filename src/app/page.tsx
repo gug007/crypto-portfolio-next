@@ -20,9 +20,9 @@ export default function Home() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-xl leading-relaxed text-secondary md:text-2xl">
-              Real-time prices and beautiful charts.
+              A modern, multi-portfolio cryptocurrency tracker.
               <br className="hidden md:block" />
-              All your crypto assets in one simple app.
+              Manage investments through manual tracking or automated exchange connections.
             </p>
 
             {/* App Store Buttons */}
@@ -125,9 +125,9 @@ export default function Home() {
                           />
                         </svg>
                       ),
-                      title: "Real-time Tracking",
+                      title: "Market Tracking",
                       description:
-                        "Live prices from all major exchanges, updated every second with zero lag.",
+                        "Latest prices from all major exchanges to keep your portfolio up to date.",
                     },
                     {
                       icon: (
@@ -167,7 +167,7 @@ export default function Home() {
                       ),
                       title: "Private & Secure",
                       description:
-                        "Your data stays on your device. No account required, no tracking, ever.",
+                        "Securely connect your exchanges or track manually. Your keys are encrypted and safe.",
                     },
                   ].map((feature) => (
                     <div

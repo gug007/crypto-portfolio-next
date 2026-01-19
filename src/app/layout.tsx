@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Crypto Portfolio - Track Your Crypto Assets",
-  description: "Real-time crypto portfolio tracker. Beautiful charts, smart alerts, and all your assets in one simple app.",
+  description: "A modern, multi-portfolio cryptocurrency tracker. This app allows users to seamlessly manage their crypto investments through manual tracking or automated exchange connections.",
 };
 
 export default function RootLayout({

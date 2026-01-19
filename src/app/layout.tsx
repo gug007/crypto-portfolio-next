@@ -28,6 +28,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if (window.location.hostname === 'crypto-portfolio.org') { window.location.hostname = 'crypto-portfolio-tracker.app'; }`,
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

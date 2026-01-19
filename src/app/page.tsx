@@ -87,7 +87,7 @@ export default function Home() {
                       alt="App Screenshot"
                       width={1206}
                       height={2622}
-                      className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[3rem] overflow-hidden"
+                      className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
                       priority
                     />
                     <Image
@@ -95,7 +95,7 @@ export default function Home() {
                       alt="App Screenshot"
                       width={1206}
                       height={2622}
-                      className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[3rem] overflow-hidden"
+                      className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
                       priority
                     />
                   </div>
@@ -208,7 +208,7 @@ export default function Home() {
               </div>
               <span className="font-medium text-foreground">Crypto Portfolio</span>
             </div>
-            <div className="flex gap-8 text-sm text-secondary">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm text-secondary">
               <Link
                 href="/privacy-policy"
                 className="transition hover:text-foreground"

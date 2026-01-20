@@ -82,14 +82,14 @@ export default function Home() {
               <div className="flex gap-6 flex-shrink-0">
                 {/* Phone 1 - Main Screen */}
                 <div className="relative w-full max-w-[280px]">
-                  <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div className="relative overflow-hidden rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
+                  <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
+                    <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
                       <Image
                         src="/iPhone-light.png"
                         alt="App Screenshot"
                         width={1206}
                         height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
+                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
                         priority
                       />
                       <Image
@@ -97,7 +97,7 @@ export default function Home() {
                         alt="App Screenshot"
                         width={1206}
                         height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
+                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
                         priority
                       />
                     </div>
@@ -105,15 +105,15 @@ export default function Home() {
                 </div>
 
                 {/* Phone 2 - Add New Page */}
-                <div className="relative w-full max-w-[280px] hidden md:block">
-                  <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div className="relative overflow-hidden rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
+                <div className="relative w-full max-w-[280px]">
+                  <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
+                    <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
                       <Image
                         src="/add-new-page-white.png"
                         alt="Add New Page Screenshot"
                         width={1206}
                         height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
+                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
                         priority
                       />
                       <Image
@@ -121,7 +121,7 @@ export default function Home() {
                         alt="Add New Page Screenshot"
                         width={1206}
                         height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
+                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
                         priority
                       />
                     </div>

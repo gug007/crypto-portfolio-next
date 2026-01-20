@@ -78,26 +78,53 @@ export default function Home() {
         <section className="overflow-hidden bg-surface py-20 transition-colors duration-300">
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start lg:justify-between">
-              {/* Phone */}
-              <div className="relative w-full max-w-[280px] flex-shrink-0">
-                <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                  <div className="relative overflow-hidden rounded-[2.5rem] bg-black">
-                    <Image
-                      src="/iPhone-light.png"
-                      alt="App Screenshot"
-                      width={1206}
-                      height={2622}
-                      className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
-                      priority
-                    />
-                    <Image
-                      src="/iPhone-dark.png"
-                      alt="App Screenshot"
-                      width={1206}
-                      height={2622}
-                      className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
-                      priority
-                    />
+              {/* Phones */}
+              <div className="flex gap-6 flex-shrink-0">
+                {/* Phone 1 - Main Screen */}
+                <div className="relative w-full max-w-[280px]">
+                  <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
+                    <div className="relative overflow-hidden rounded-[2.5rem] bg-black">
+                      <Image
+                        src="/iPhone-light.png"
+                        alt="App Screenshot"
+                        width={1206}
+                        height={2622}
+                        className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
+                        priority
+                      />
+                      <Image
+                        src="/iPhone-dark.png"
+                        alt="App Screenshot"
+                        width={1206}
+                        height={2622}
+                        className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Phone 2 - Add New Page */}
+                <div className="relative w-full max-w-[280px] hidden md:block">
+                  <div className="relative rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
+                    <div className="relative overflow-hidden rounded-[2.5rem] bg-black">
+                      <Image
+                        src="/add-new-page-white.png"
+                        alt="Add New Page Screenshot"
+                        width={1206}
+                        height={2622}
+                        className="w-full h-auto drop-shadow-2xl dark:hidden rounded-[2.5rem] overflow-hidden"
+                        priority
+                      />
+                      <Image
+                        src="/add-new-page-dark.png"
+                        alt="Add New Page Screenshot"
+                        width={1206}
+                        height={2622}
+                        className="w-full h-auto drop-shadow-2xl hidden dark:block rounded-[2.5rem] overflow-hidden"
+                        priority
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

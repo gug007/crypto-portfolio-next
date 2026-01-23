@@ -31,7 +31,9 @@ export default function Home() {
               id="download"
             >
               <a
-                href="#"
+                href="https://apps.apple.com/app/id6757869052"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative flex items-center gap-3 overflow-hidden rounded-xl bg-black px-5 py-3 text-white shadow-lg shadow-black/20 ring-1 ring-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-black/30 hover:ring-white/20 dark:bg-white dark:text-black dark:shadow-white/5 dark:ring-black/10"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

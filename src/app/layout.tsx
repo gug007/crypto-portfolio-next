@@ -29,13 +29,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="apple-itunes-app" content="app-id=6757869052"></meta>
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* Google tag (gtag.js) */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-4H14KXY5XX"
+          src="https://www.googletagmanager.com/gtag/js?id=G-6NY7QNNQLQ"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -43,10 +38,13 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-4H14KXY5XX');
+            gtag('config', 'G-6NY7QNNQLQ');
           `}
         </Script>
-
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <script
           dangerouslySetInnerHTML={{
             __html: `if (window.location.hostname === 'crypto-portfolio.org') { window.location.hostname = 'crypto-portfolio-tracker.app'; }`,

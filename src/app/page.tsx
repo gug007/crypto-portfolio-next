@@ -12,17 +12,17 @@ export default function Home() {
       <main>
         <section className="px-6 py-20 md:py-32">
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-            <h1 className="text-5xl font-semibold leading-tight tracking-tight md:text-7xl md:leading-tight">
-              Crypto portfolio <br />
-              <span className="bg-gradient-to-r from-[#0071e3] to-[#00c7be] bg-clip-text text-transparent dark:from-[#2997ff] dark:to-[#64d2ff]">
-                tracker app
-              </span>
+            <h1 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-5xl font-semibold leading-tight tracking-tight text-transparent md:text-7xl md:leading-tight dark:from-[#2997ff] dark:to-[#64d2ff]">
+              Free <br />
+              crypto portfolio <br />
+              tracker app
             </h1>
 
             <p className="mt-6 max-w-2xl text-xl leading-relaxed text-secondary md:text-2xl">
               A modern, multi-portfolio cryptocurrency tracker.
               <br className="hidden md:block" />
-              Manage investments through manual tracking or automated exchange connections.
+              Manage investments through manual tracking or automated exchange
+              connections.
             </p>
 
             {/* App Store Buttons */}
@@ -53,9 +53,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <div
-                className="relative flex cursor-not-allowed items-center gap-3 overflow-hidden rounded-xl bg-black/5 px-5 py-3 text-black/50 ring-1 ring-black/5 dark:bg-white/10 dark:text-white/50 dark:ring-white/10"
-              >
+              <div className="relative flex cursor-not-allowed items-center gap-3 overflow-hidden rounded-xl bg-black/5 px-5 py-3 text-black/50 ring-1 ring-black/5 dark:bg-white/10 dark:text-white/50 dark:ring-white/10">
                 <svg
                   className="h-9 w-9"
                   viewBox="0 0 24 24"
@@ -85,7 +83,10 @@ export default function Home() {
                 {/* Phone 1 - Main Screen */}
                 <div className="relative w-full max-w-[280px]">
                   <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
+                    <div
+                      className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black"
+                      style={{ aspectRatio: "1206/2622" }}
+                    >
                       <Image
                         src="/iPhone-light.png"
                         alt="App Screenshot"
@@ -109,7 +110,10 @@ export default function Home() {
                 {/* Phone 2 - Add New Page */}
                 <div className="relative w-full max-w-[280px]">
                   <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black" style={{ aspectRatio: '1206/2622' }}>
+                    <div
+                      className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black"
+                      style={{ aspectRatio: "1206/2622" }}
+                    >
                       <Image
                         src="/add-new-page-white.png"
                         alt="Add New Page Screenshot"
@@ -227,7 +231,9 @@ export default function Home() {
                         {feature.icon}
                       </div>
                       <div>
-                        <h3 className="mb-1 font-semibold text-foreground">{feature.title}</h3>
+                        <h3 className="mb-1 font-semibold text-foreground">
+                          {feature.title}
+                        </h3>
                         <p className="text-sm leading-relaxed text-secondary">
                           {feature.description}
                         </p>
@@ -255,7 +261,9 @@ export default function Home() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <span className="font-medium text-foreground">Crypto Portfolio</span>
+              <span className="font-medium text-foreground">
+                Crypto Portfolio
+              </span>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm text-secondary">
               <Link
@@ -264,10 +272,7 @@ export default function Home() {
               >
                 Privacy Policy
               </Link>
-              <a
-                href="#"
-                className="transition hover:text-foreground"
-              >
+              <a href="#" className="transition hover:text-foreground">
                 Terms of Service
               </a>
               <a

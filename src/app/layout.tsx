@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Crypto Portfolio - Track Your Crypto Assets",
-  description: "A modern, multi-portfolio cryptocurrency tracker. This app allows users to seamlessly manage their crypto investments through manual tracking or automated exchange connections.",
+  description:
+    "A modern, multi-portfolio cryptocurrency tracker. This app allows users to seamlessly manage their crypto investments through manual tracking or automated exchange connections.",
 };
 
 export default function RootLayout({
@@ -25,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="apple-itunes-app" content="app-id=6757869052"></meta>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

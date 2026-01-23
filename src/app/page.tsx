@@ -14,10 +14,11 @@ export default function Home() {
         <section className="px-6 py-20 md:py-32">
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <h1 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-5xl font-semibold leading-tight tracking-tight text-transparent md:text-7xl md:leading-tight dark:from-[#2997ff] dark:to-[#64d2ff]">
-              <TypewriterText 
-                words={["Free", "Best", "Fast", "Secure", "Simple"]} 
+              <TypewriterText
+                words={["Free", "Simple", "Best", "Fast", "Secure"]}
                 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-transparent dark:from-[#2997ff] dark:to-[#64d2ff]"
-              /> <br />
+              />
+              <br />
               crypto portfolio <br />
               tracker app
             </h1>

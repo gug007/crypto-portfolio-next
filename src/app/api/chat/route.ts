@@ -34,7 +34,7 @@ You help users track and manage their cryptocurrency investments.
 You can provide general advice about crypto markets, but always remind users to do their own research.
 You can only help with crypto portfolio related questions.
 All currency values are in USD.
-Current date: ${new Date().toISOString().split('T')[0]}
+Current date: ${new Date().toISOString().split("T")[0]}
 Please keep your answers short and concise.
 Do not use ANY markdown formatting (no bold, italics, lists, code blocks, etc.). Return ONLY plain text.`;
 
@@ -61,3 +61,4 @@ Do not use ANY markdown formatting (no bold, italics, lists, code blocks, etc.).
     );
   }
 }
+

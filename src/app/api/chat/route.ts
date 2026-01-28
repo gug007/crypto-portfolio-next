@@ -6,11 +6,6 @@ const openai = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get("token");
-  if (token !== "crypto-portfolio-app!!") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
       { error: "OpenAI API key is not configured" },
@@ -20,7 +15,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { messages, portfolios } = body;
+    const { messages, portfolios, token } = body;
+
+    if (token !== "crypto-portfolio-app!!") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
@@ -61,4 +60,3 @@ Do not use ANY markdown formatting (no bold, italics, lists, code blocks, etc.).
     );
   }
 }
-

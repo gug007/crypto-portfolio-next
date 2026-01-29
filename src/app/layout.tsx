@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://crypto-portfolio-tracker.app"),
   title: "Crypto Portfolio - Track Your Crypto Assets",
   description:
     "A modern, multi-portfolio cryptocurrency tracker. This app allows users to seamlessly manage their crypto investments through manual tracking or automated exchange connections.",

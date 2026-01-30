@@ -15,7 +15,7 @@ export default function Home() {
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <h1 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-5xl font-semibold leading-tight tracking-tight text-transparent md:text-7xl md:leading-tight dark:from-[#2997ff] dark:to-[#64d2ff]">
               <TypewriterText
-                words={["Free", "Simple", "Best", "Fast", "Secure"]}
+                words={["Free", "Smart", "Simple", "Best", "Fast", "Secure"]}
                 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-transparent dark:from-[#2997ff] dark:to-[#64d2ff]"
               />
               <br />
@@ -143,7 +143,9 @@ export default function Home() {
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
                     Designed for simplicity.
                     <br />
-                    <span className="text-secondary">Built for performance.</span>
+                    <span className="text-secondary">
+                      Built for performance.
+                    </span>
                   </h2>
                   <p className="text-lg leading-relaxed text-secondary md:text-xl">
                     Experience a portfolio tracker that gets out of your way.

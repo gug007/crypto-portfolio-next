@@ -80,72 +80,78 @@ export default function Home() {
         </section>
 
         {/* Phone Mockup Section */}
-        <section className="overflow-hidden bg-surface py-20 transition-colors duration-300">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start lg:justify-between">
+        <section className="relative overflow-hidden py-32 lg:py-40">
+          <div className="absolute inset-0 bg-surface/50 transition-colors duration-300" />
+          <div className="mx-auto max-w-7xl px-6 relative">
+            <div className="flex flex-col items-center gap-24 lg:flex-row lg:items-center lg:justify-between">
               {/* Phones */}
-              <div className="flex gap-6 flex-shrink-0">
-                {/* Phone 1 - Main Screen */}
-                <div className="relative w-full max-w-[280px]">
-                  <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div
-                      className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black"
-                      style={{ aspectRatio: "1206/2622" }}
-                    >
-                      <Image
-                        src="/iPhone-light.png"
-                        alt="App Screenshot"
-                        width={1206}
-                        height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
-                        priority
-                      />
-                      <Image
-                        src="/iPhone-dark.png"
-                        alt="App Screenshot"
-                        width={1206}
-                        height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
-                        priority
-                      />
+              <div className="relative flex flex-shrink-0 justify-center lg:justify-start">
+                <div className="relative z-10 -mr-12 md:-mr-20 translate-y-12 rotate-[-5deg] transform transition-transform duration-500 hover:rotate-0 hover:z-30">
+                  <div className="relative w-[240px] md:w-[280px]">
+                    <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-[#1d1d1f] p-2 shadow-2xl ring-1 ring-white/10 dark:bg-[#2d2d2f]">
+                      <div className="relative aspect-[1170/2532] overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-black">
+                        <Image
+                          src="/iPhone-light.png"
+                          alt="App Screenshot"
+                          width={1170}
+                          height={2532}
+                          className="h-full w-full object-cover dark:hidden"
+                          priority
+                        />
+                        <Image
+                          src="/iPhone-dark.png"
+                          alt="App Screenshot"
+                          width={1170}
+                          height={2532}
+                          className="hidden h-full w-full object-cover dark:block"
+                          priority
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Phone 2 - Add New Page */}
-                <div className="relative w-full max-w-[280px]">
-                  <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#1d1d1f] p-1.5 shadow-2xl dark:bg-[#2d2d2f] ring-1 ring-white/10 overflow-hidden">
-                    <div
-                      className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-black"
-                      style={{ aspectRatio: "1206/2622" }}
-                    >
-                      <Image
-                        src="/add-new-page-white.png"
-                        alt="Add New Page Screenshot"
-                        width={1206}
-                        height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl dark:hidden rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
-                        priority
-                      />
-                      <Image
-                        src="/add-new-page-dark.png"
-                        alt="Add New Page Screenshot"
-                        width={1206}
-                        height={2622}
-                        className="w-full h-full object-cover drop-shadow-2xl hidden dark:block rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden"
-                        priority
-                      />
+                <div className="relative z-20 rotate-[5deg] transform transition-transform duration-500 hover:rotate-0 hover:z-30">
+                  <div className="relative w-[240px] md:w-[280px]">
+                    <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-[#1d1d1f] p-2 shadow-2xl ring-1 ring-white/10 dark:bg-[#2d2d2f]">
+                      <div className="relative aspect-[1170/2532] overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-black">
+                        <Image
+                          src="/add-new-page-white.png"
+                          alt="Add New Page Screenshot"
+                          width={1170}
+                          height={2532}
+                          className="h-full w-full object-cover dark:hidden"
+                          priority
+                        />
+                        <Image
+                          src="/add-new-page-dark.png"
+                          alt="Add New Page Screenshot"
+                          width={1170}
+                          height={2532}
+                          className="hidden h-full w-full object-cover dark:block"
+                          priority
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Features */}
-              <div className="flex flex-col gap-8 lg:max-w-xl lg:pt-8">
-                <h2 className="text-center text-3xl font-semibold tracking-tight md:text-4xl lg:text-left text-foreground">
-                  Designed to be simple
-                </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="flex flex-col gap-12 lg:max-w-xl lg:pl-16">
+                <div className="space-y-4 text-center lg:text-left">
+                  <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+                    Designed for simplicity.
+                    <br />
+                    <span className="text-secondary">Built for performance.</span>
+                  </h2>
+                  <p className="text-lg leading-relaxed text-secondary md:text-xl">
+                    Experience a portfolio tracker that gets out of your way.
+                    Clean, fast, and secure by design.
+                  </p>
+                </div>
+
+                <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
                   {[
                     {
                       icon: (
@@ -165,7 +171,7 @@ export default function Home() {
                       ),
                       title: "Super Fast Launch",
                       description:
-                        "Lightning-fast app startup in less than a second. Get to your portfolio instantly.",
+                        "Opens in under a second. No splash screens, no waiting.",
                     },
                     {
                       icon: (
@@ -183,9 +189,9 @@ export default function Home() {
                           />
                         </svg>
                       ),
-                      title: "Market Tracking",
+                      title: "Real-time Tracking",
                       description:
-                        "Latest prices from all major exchanges to keep your portfolio up to date.",
+                        "Live prices from major exchanges worldwide.",
                     },
                     {
                       icon: (
@@ -203,9 +209,9 @@ export default function Home() {
                           />
                         </svg>
                       ),
-                      title: "AI Assistant Chat",
+                      title: "AI Assistant",
                       description:
-                        "Get instant answers about your portfolio and market trends with our intelligent AI assistant.",
+                        "Ask questions about your portfolio and get instant answers.",
                     },
                     {
                       icon: (
@@ -225,7 +231,7 @@ export default function Home() {
                       ),
                       title: "Beautiful Charts",
                       description:
-                        "Interactive charts with multiple timeframes to visualize your portfolio performance.",
+                        "Visualize your performance with interactive graphs.",
                     },
                     {
                       icon: (
@@ -248,21 +254,18 @@ export default function Home() {
                         "Securely connect your exchanges or track manually. Your keys are encrypted and safe.",
                     },
                   ].map((feature) => (
-                    <div
-                      key={feature.title}
-                      className="flex gap-4 rounded-2xl bg-background p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                    >
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                        {feature.icon}
-                      </div>
-                      <div>
-                        <h3 className="mb-1 font-semibold text-foreground">
+                    <div key={feature.title} className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                          {feature.icon}
+                        </div>
+                        <h3 className="font-semibold text-foreground">
                           {feature.title}
                         </h3>
-                        <p className="text-sm leading-relaxed text-secondary">
-                          {feature.description}
-                        </p>
                       </div>
+                      <p className="text-sm leading-relaxed text-secondary pl-11">
+                        {feature.description}
+                      </p>
                     </div>
                   ))}
                 </div>

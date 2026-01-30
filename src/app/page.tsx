@@ -27,7 +27,7 @@ export default function Home() {
               A modern, multi-portfolio cryptocurrency tracker.
               <br className="hidden md:block" />
               Manage investments through manual tracking or automated exchange
-              connections.
+              connections
             </p>
 
             {/* App Store Buttons */}

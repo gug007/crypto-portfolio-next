@@ -141,15 +141,15 @@ export default function Home() {
               <div className="flex flex-col gap-12 lg:max-w-xl lg:pl-16">
                 <div className="space-y-4 text-center lg:text-left">
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-                    Designed for simplicity.
+                    Designed for simplicity
                     <br />
                     <span className="text-secondary">
-                      Built for performance.
+                      Built for performance
                     </span>
                   </h2>
                   <p className="text-lg leading-relaxed text-secondary md:text-xl">
                     Experience a portfolio tracker that gets out of your way.
-                    Clean, fast, and secure by design.
+                    Clean, fast, and secure by design
                   </p>
                 </div>
 
@@ -173,7 +173,7 @@ export default function Home() {
                       ),
                       title: "Super Fast Launch",
                       description:
-                        "Opens in under a second. No splash screens, no waiting.",
+                        "Opens in under a second. No splash screens, no waiting",
                     },
                     {
                       icon: (
@@ -192,8 +192,7 @@ export default function Home() {
                         </svg>
                       ),
                       title: "Real-time Tracking",
-                      description:
-                        "Live prices from major exchanges worldwide.",
+                      description: "Live prices from major exchanges worldwide",
                     },
                     {
                       icon: (
@@ -213,7 +212,7 @@ export default function Home() {
                       ),
                       title: "AI Assistant",
                       description:
-                        "Ask questions about your portfolio and get instant answers.",
+                        "Ask questions about your portfolio and get instant answers",
                     },
                     {
                       icon: (
@@ -233,7 +232,7 @@ export default function Home() {
                       ),
                       title: "Beautiful Charts",
                       description:
-                        "Visualize your performance with interactive graphs.",
+                        "Visualize your performance with interactive graphs",
                     },
                     {
                       icon: (
@@ -253,7 +252,7 @@ export default function Home() {
                       ),
                       title: "Private & Secure",
                       description:
-                        "Securely connect your exchanges or track manually. Your keys are encrypted and safe.",
+                        "Securely connect your exchanges or track manually. Your keys are encrypted and safe",
                     },
                   ].map((feature) => (
                     <div key={feature.title} className="flex flex-col gap-2">

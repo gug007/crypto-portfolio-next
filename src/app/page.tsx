@@ -19,8 +19,8 @@ export default function Home() {
                 className="inline-block bg-gradient-to-br from-[#0071e3] to-[#00c7be] bg-clip-text text-transparent dark:from-[#2997ff] dark:to-[#64d2ff]"
               />
               <br />
-              crypto portfolio <br />
-              tracker app
+              Crypto Portfolio <br />
+              Tracker App
             </h1>
 
             <p className="mt-6 max-w-2xl text-xl leading-relaxed text-secondary md:text-2xl">

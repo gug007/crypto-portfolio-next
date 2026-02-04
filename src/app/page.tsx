@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TypewriterText } from "@/components/typewriter-text";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
@@ -277,46 +278,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-black/5 bg-surface transition-colors duration-300 dark:border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-12">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent overflow-hidden">
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  width={32}
-                  height={32}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <span className="font-medium text-foreground">
-                Crypto Portfolio
-              </span>
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm text-secondary">
-              <Link
-                href="/privacy-policy"
-                className="transition hover:text-foreground"
-              >
-                Privacy Policy
-              </Link>
-              <a href="#" className="transition hover:text-foreground">
-                Terms of Service
-              </a>
-              <a
-                href="mailto:support@crypto-portfolio-tracker.app"
-                className="transition hover:text-foreground"
-              >
-                support@crypto-portfolio-tracker.app
-              </a>
-            </div>
-            <div className="text-sm text-secondary">
-              © 2026 Crypto Portfolio. All rights reserved.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

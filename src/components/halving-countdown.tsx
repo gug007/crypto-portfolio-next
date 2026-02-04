@@ -75,7 +75,7 @@ export function HalvingCountdown() {
     : 0;
 
   return (
-    <div className="group relative overflow-hidden rounded-[2.5rem] bg-white/40 p-8 shadow-2xl shadow-indigo-500/10 ring-1 ring-white/60 backdrop-blur-2xl transition hover:bg-white/50 dark:bg-black/20 dark:shadow-none dark:ring-white/10 dark:hover:bg-white/5 md:p-10">
+    <div className="group relative overflow-hidden rounded-[2.5rem] bg-white/40 p-6 shadow-2xl shadow-indigo-500/10 ring-1 ring-white/60 backdrop-blur-2xl transition hover:bg-white/50 dark:bg-black/20 dark:shadow-none dark:ring-white/10 dark:hover:bg-white/5 md:p-10">
       {/* Dynamic background gradient mesh */}
       <div className="absolute -left-20 -top-20 -z-10 h-64 w-64 rounded-full bg-blue-400/20 blur-[80px] transition duration-1000 group-hover:bg-blue-400/30 dark:bg-blue-900/20" />
       <div className="absolute -bottom-20 -right-20 -z-10 h-64 w-64 rounded-full bg-purple-400/20 blur-[80px] transition duration-1000 group-hover:bg-purple-400/30 dark:bg-purple-900/20" />
@@ -120,7 +120,7 @@ export function HalvingCountdown() {
           {/* Main Counter */}
           <div className="grid gap-4 md:grid-cols-[2fr_3fr] md:items-end">
              <div className="flex flex-col items-center md:items-start">
-                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-8xl font-bold leading-none tracking-tighter text-transparent sm:text-9xl">
+                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-6xl font-bold leading-none tracking-tighter text-transparent sm:text-8xl md:text-9xl">
                   {duration.days}
                 </span>
                 <span className="mt-2 text-lg font-medium text-secondary">Isolate Days Remaining</span>

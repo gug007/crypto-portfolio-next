@@ -167,10 +167,10 @@ export default function BitcoinHalvingPage() {
         <ThemeToggle />
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-20 md:py-28">
+      <main className="mx-auto max-w-5xl px-6 py-12 md:py-28">
         <Link
           href="/"
-          className="text-secondary hover:text-foreground transition-colors mb-10 inline-flex items-center gap-2"
+          className="text-secondary hover:text-foreground transition-colors mb-8 md:mb-10 inline-flex items-center gap-2 text-sm md:text-base"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
@@ -181,7 +181,7 @@ export default function BitcoinHalvingPage() {
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.100),white)] opacity-20 dark:bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.900),transparent)]" />
           <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 sm:mr-28 md:mr-0 lg:mr-0 xl:mr-16 xl:origin-center dark:bg-transparent dark:shadow-none dark:ring-white/5" />
           
-          <div className="relative py-12 md:py-20 text-center">
+          <div className="relative py-8 md:py-20 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/50 px-4 py-1.5 text-xs font-medium text-secondary backdrop-blur-md shadow-sm dark:border-white/10 dark:bg-white/5 ring-1 ring-inset ring-black/5 dark:ring-white/5">
               <Sparkles className="h-3.5 w-3.5 text-amber-500" />
               <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent font-bold">Bitcoin Essentials</span>
@@ -189,11 +189,11 @@ export default function BitcoinHalvingPage() {
               <span>A complete guide</span>
             </div>
 
-            <h1 className="mt-8 text-5xl font-bold tracking-tight text-foreground sm:text-7xl">
+            <h1 className="mt-8 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-7xl">
               Bitcoin <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Halving</span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary">
+            <p className="mx-auto mt-6 max-w-2xl text-base md:text-lg leading-7 md:leading-8 text-secondary">
               The programmed event that cuts the{" "}
               <span className="text-foreground font-semibold">block subsidy</span> in half
               roughly every four years—slowing new issuance and redefining the
@@ -257,7 +257,7 @@ export default function BitcoinHalvingPage() {
           </div>
         </section>
 
-        <section className="mt-14 grid gap-10">
+        <section className="mt-14 flex flex-col gap-10">
           <div className="space-y-4">
             <h2
               id="what-is-a-halving"
@@ -512,7 +512,7 @@ export default function BitcoinHalvingPage() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-black/5 bg-surface/60 p-8 dark:border-white/10 dark:bg-surface/40 md:p-10">
+          <div className="rounded-3xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40 md:p-10">
             <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
               Track your crypto portfolio with clarity
             </h2>
@@ -524,13 +524,13 @@ export default function BitcoinHalvingPage() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/#download"
-                className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-[color:var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-[color:var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 Download the app
               </Link>
               <Link
                 href="/"
-                className="inline-flex items-center justify-center rounded-xl border border-black/10 bg-background/60 px-5 py-3 text-sm font-medium text-foreground hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 dark:border-white/10 dark:bg-background/30"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-black/10 bg-background/60 px-5 py-3 text-sm font-medium text-foreground hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 dark:border-white/10 dark:bg-background/30"
               >
                 Explore Crypto Portfolio
               </Link>

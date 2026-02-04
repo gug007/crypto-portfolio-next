@@ -251,9 +251,7 @@ export default function BitcoinHalvingPage() {
               </div>
             </div>
 
-            <p className="mx-auto mt-8 max-w-xl text-xs leading-relaxed text-secondary/80">
-              Not financial advice. Information is for education only; dates are approximate as block production speed varies over time.
-            </p>
+
           </div>
         </section>
 

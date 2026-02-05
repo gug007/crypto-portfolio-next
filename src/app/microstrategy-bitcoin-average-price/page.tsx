@@ -337,6 +337,19 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
     /\bAs of\s+(\d{1,2}\/\d{1,2}\/\d{4})\b/i,
   ];
 
+  // Newer filings sometimes provide BTC holdings via a "BTC Update" table (Aggregate BTC Holdings / Aggregate Purchase Price / Average Purchase Price),
+  // rather than a prose sentence ("held ... bitcoins").
+  const btcUpdateTableRowPattern =
+    /(\d{1,7})\s*\$\s*([\d.,]+)\s*\$\s*([\d,]+)\s+(\d{1,3}(?:,\d{3})+)\s*\$\s*([\d.,]+)\s*\$\s*([\d,]+)\b/i;
+
+  const strictAsOfHoldingsEntryAvgPatterns = [
+    /\bAs of\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{4})\b[\s\S]{0,260}?\bheld\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b[\s\S]{0,900}?\baggregate\s+(?:purchase\s+price|acquisition\s+cost|cost)\b[^$]{0,220}?\$\s*([\d.,]+)\s*(billion|million)?\b[\s\S]{0,900}?\baverage(?:\s+purchase)?\s+(?:price|cost|cost\s+basis)\b[^$]{0,220}?\$\s*([\d,]+(?:\.\d+)?)\s*(?:per\s+)?(?:bitcoin|btc)\b/gi,
+  ];
+
+  const strictAsOfHoldingsAvgPatterns = [
+    /\bAs of\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{4})\b[\s\S]{0,260}?\bheld\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b[\s\S]{0,1200}?\baverage(?:\s+purchase)?\s+(?:price|cost|cost\s+basis)\b[^$]{0,220}?\$\s*([\d,]+(?:\.\d+)?)\s*(?:per\s+)?(?:bitcoin|btc)\b/gi,
+  ];
+
   const holdingsPatterns = [
     /\bheld\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b/i,
     /\bholds?\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b/i,
@@ -360,6 +373,141 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
   const MIN_AVG_USD = 1_000;
   const MAX_AVG_USD = 2_000_000;
   const MAX_HOLDINGS_BTC = 5_000_000;
+
+  const tableLabelMatches = getAllMatches(text, /\bAggregate\s+BTC\s+Holdings\b/i);
+  if (tableLabelMatches.length > 0) {
+    const tableCandidates: Array<{
+      asOfDateLabel: string | null;
+      totalHoldingsBtc: number;
+      totalEntryValueUsd: number;
+      avgPurchasePriceUsd: number;
+      score: number;
+    }> = [];
+
+    for (const labelMatch of tableLabelMatches) {
+      const index = labelMatch.index;
+      const start = Math.max(0, index - 2_000);
+      const end = Math.min(text.length, index + 4_000);
+      const windowText = text.slice(start, end);
+
+      const asOfMatch = firstMatch(windowText, asOfPatterns);
+      const asOfDateLabel = asOfMatch ? asOfMatch[1] : null;
+
+      const rowMatch = windowText.match(btcUpdateTableRowPattern);
+      if (!rowMatch) continue;
+
+      // Row columns:
+      // 1) BTC acquired
+      // 2) Aggregate purchase price (in millions)
+      // 3) Average purchase price (period)
+      // 4) Aggregate BTC holdings (as-of)
+      // 5) Aggregate purchase price (in billions) (as-of)
+      // 6) Average purchase price (as-of)
+      const holdings = parseIntLike(rowMatch[4] ?? "");
+      const aggregatePurchaseBillions = parseNumberLike(rowMatch[5] ?? "");
+      const avgPurchasePrice = parseNumberLike(rowMatch[6] ?? "");
+
+      if (
+        holdings === null ||
+        aggregatePurchaseBillions === null ||
+        avgPurchasePrice === null ||
+        holdings <= 0 ||
+        holdings > MAX_HOLDINGS_BTC
+      ) {
+        continue;
+      }
+
+      const totalEntryValueUsd = aggregatePurchaseBillions * 1_000_000_000;
+      if (
+        avgPurchasePrice < MIN_AVG_USD ||
+        avgPurchasePrice > MAX_AVG_USD ||
+        totalEntryValueUsd < holdings * MIN_AVG_USD ||
+        totalEntryValueUsd > holdings * MAX_AVG_USD
+      ) {
+        continue;
+      }
+
+      tableCandidates.push({
+        asOfDateLabel,
+        totalHoldingsBtc: holdings,
+        totalEntryValueUsd,
+        avgPurchasePriceUsd: avgPurchasePrice,
+        score: asOfDateLabel ? 50 : 45,
+      });
+    }
+
+    if (tableCandidates.length > 0) {
+      tableCandidates.sort((a, b) => b.score - a.score);
+      const best = tableCandidates[0];
+      return {
+        asOfDateLabel: best.asOfDateLabel,
+        totalHoldingsBtc: best.totalHoldingsBtc,
+        totalEntryValueUsd: best.totalEntryValueUsd,
+        avgPurchasePriceUsd: best.avgPurchasePriceUsd,
+      };
+    }
+  }
+
+  const strictCandidates: Array<{
+    asOfDateLabel: string;
+    totalHoldingsBtc: number;
+    totalEntryValueUsd: number;
+    avgPurchasePriceUsd: number;
+    score: number;
+  }> = [];
+
+  for (const pattern of strictAsOfHoldingsEntryAvgPatterns) {
+    const matches = getAllMatches(text, pattern);
+    for (const match of matches) {
+      const asOfDateLabel = match[1] ?? "";
+      const holdings = parseIntLike(match[2] ?? "");
+      const entry = parseUsdApprox(match[3] ?? "", match[4]);
+      const avg = parseNumberLike(match[5] ?? "");
+      if (!asOfDateLabel || holdings === null || entry === null || avg === null) continue;
+      if (holdings <= 0 || holdings > MAX_HOLDINGS_BTC) continue;
+      if (avg < MIN_AVG_USD || avg > MAX_AVG_USD) continue;
+      if (entry < holdings * MIN_AVG_USD || entry > holdings * MAX_AVG_USD) continue;
+
+      strictCandidates.push({
+        asOfDateLabel,
+        totalHoldingsBtc: holdings,
+        totalEntryValueUsd: entry,
+        avgPurchasePriceUsd: avg,
+        score: 100,
+      });
+    }
+  }
+
+  for (const pattern of strictAsOfHoldingsAvgPatterns) {
+    const matches = getAllMatches(text, pattern);
+    for (const match of matches) {
+      const asOfDateLabel = match[1] ?? "";
+      const holdings = parseIntLike(match[2] ?? "");
+      const avg = parseNumberLike(match[3] ?? "");
+      if (!asOfDateLabel || holdings === null || avg === null) continue;
+      if (holdings <= 0 || holdings > MAX_HOLDINGS_BTC) continue;
+      if (avg < MIN_AVG_USD || avg > MAX_AVG_USD) continue;
+
+      strictCandidates.push({
+        asOfDateLabel,
+        totalHoldingsBtc: holdings,
+        totalEntryValueUsd: avg * holdings,
+        avgPurchasePriceUsd: avg,
+        score: 80,
+      });
+    }
+  }
+
+  if (strictCandidates.length > 0) {
+    strictCandidates.sort((a, b) => b.score - a.score);
+    const best = strictCandidates[0];
+    return {
+      asOfDateLabel: best.asOfDateLabel,
+      totalHoldingsBtc: best.totalHoldingsBtc,
+      totalEntryValueUsd: best.totalEntryValueUsd,
+      avgPurchasePriceUsd: best.avgPurchasePriceUsd,
+    };
+  }
 
   const holdingsMatches = holdingsPatterns.flatMap((pattern) => getAllMatches(text, pattern));
   if (holdingsMatches.length === 0) return null;
@@ -431,6 +579,8 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
     }
 
     if (bestAvg === null && avgCandidates.length > 0) {
+      // Avoid picking an "average price" for a subset of purchases without a clear "as of" anchor.
+      if (!asOfDateLabel) continue;
       bestAvg = avgCandidates[0].value;
       bestEntry = bestAvg * holdings;
       explicitAvg = true;
@@ -483,7 +633,7 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
 
 async function fetchSecJson<T>(url: string) {
   const res = await fetch(url, {
-    next: { revalidate: 60 * 60 }, // 1 hour
+    next: { revalidate: 60 * 15 }, // 15 min
     headers: {
       Accept: "application/json",
       "User-Agent": SEC_USER_AGENT,
@@ -499,7 +649,7 @@ async function fetchSecJson<T>(url: string) {
 
 async function fetchSecText(url: string, accept: string = "text/html") {
   const res = await fetch(url, {
-    next: { revalidate: 60 * 60 }, // 1 hour
+    next: { revalidate: 60 * 15 }, // 15 min
     headers: {
       Accept: accept,
       "User-Agent": SEC_USER_AGENT,
@@ -827,7 +977,36 @@ async function fetchMicroStrategyBtcCostBasisHistory(): Promise<MstrTreasurySnap
     }
   }
 
-  return [...byDate.values()].sort((a, b) => a.xUtcMs - b.xUtcMs);
+  const sorted = [...byDate.values()].sort((a, b) => a.xUtcMs - b.xUtcMs);
+
+  // Heuristic cleanup: MicroStrategy's BTC holdings are expected to be non-decreasing; drop clear outliers
+  // that can occur when an unrelated "BTC" table value is misparsed from a filing exhibit.
+  const filtered: MstrTreasurySnapshotPoint[] = [];
+  for (const point of sorted) {
+    const prev = filtered.length > 0 ? filtered[filtered.length - 1] : null;
+    if (!prev) {
+      filtered.push(point);
+      continue;
+    }
+
+    if (point.totalHoldingsBtc < prev.totalHoldingsBtc) {
+      continue;
+    }
+
+    const delta = point.totalHoldingsBtc - prev.totalHoldingsBtc;
+    const dayMs = 86_400_000;
+    const days = Math.max(1, Math.floor((point.xUtcMs - prev.xUtcMs) / dayMs));
+    const ratio = prev.totalHoldingsBtc > 0 ? point.totalHoldingsBtc / prev.totalHoldingsBtc : 1;
+
+    // If holdings jump >75% within a year and by >50k BTC, treat it as an extraction outlier.
+    if (days <= 365 && ratio > 1.75 && delta > 50_000) {
+      continue;
+    }
+
+    filtered.push(point);
+  }
+
+  return filtered;
 }
 
 function buildStepPointsFromTreasuryHistory(
@@ -872,6 +1051,7 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
   let treasuryLatest: MstrTreasurySnapshotPoint | null = null;
   let errorMessage: string | null = null;
   let treasuryWarning: string | null = null;
+  let treasuryDataNote: string | null = null;
 
   const [btcResult, treasuryResult] = await Promise.allSettled([
     fetchBtcUsdDailyPricesSinceMstrFirstBuy(),
@@ -892,6 +1072,10 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
     if (!treasuryLatest) {
       treasuryWarning =
         "No MicroStrategy treasury snapshots were extracted from the SEC filings scanned.";
+    }
+    if (treasuryLatest && treasuryLatest.totalHoldingsBtc > 400_000) {
+      treasuryDataNote =
+        "Note: This SEC-extracted snapshot looks implausible; open the linked filing to verify (it may be a parsing error).";
     }
   } else {
     const reason = treasuryResult.reason;
@@ -1057,10 +1241,18 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
                         : formatDateUtc(treasuryLatest.xUtcMs))}
                 </div>
               ) : null}
+              {treasuryLatest.filingDateIso ? (
+                <div className="mt-0.5 text-xs text-secondary/70">
+                  Filed {formatDateUtc(toUtcMsFromIsoDate(treasuryLatest.filingDateIso))} (UTC)
+                </div>
+              ) : null}
               {treasuryStalenessDays !== null && treasuryStalenessDays > 10 ? (
                 <div className="mt-1 text-xs text-secondary/70">
                   Treasury data lags the BTC price series by ~{treasuryStalenessDays} days.
                 </div>
+              ) : null}
+              {treasuryDataNote ? (
+                <div className="mt-1 text-xs text-secondary/70">{treasuryDataNote}</div>
               ) : null}
               <a
                 href={treasuryLatest.sourceUrl}

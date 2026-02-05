@@ -346,341 +346,282 @@ export default async function BitcoinBelowPreviousAthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <header className="absolute top-0 right-0 p-6 z-10">
+    <div className="relative min-h-screen bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-neutral-100 selection:bg-emerald-500/20">
+      {/* Background Ambience */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -left-[20%] -top-[10%] h-[800px] w-[800px] rounded-full bg-emerald-500/5 blur-[120px] dark:bg-emerald-500/10" />
+        <div className="absolute -right-[20%] -bottom-[10%] h-[600px] w-[600px] rounded-full bg-blue-500/5 blur-[100px] dark:bg-blue-500/10" />
+      </div>
+
+      <header className="absolute right-0 top-0 z-50 p-6">
         <ThemeToggle />
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-12 md:py-28">
-        <Link
-          href="/"
-          className="text-secondary hover:text-foreground transition-colors mb-8 md:mb-10 inline-flex items-center gap-2 text-sm md:text-base"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
+      <main className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-24">
+        {/* Navigation */}
+        <div className="mb-12">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/50 px-4 py-2 text-sm font-medium text-neutral-600 transition-all hover:border-emerald-500/20 hover:bg-emerald-50 hover:text-emerald-700 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-neutral-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Home
+          </Link>
+        </div>
 
-        <section className="relative isolate overflow-hidden rounded-3xl border border-black/5 bg-background/30 p-8 shadow-sm dark:border-white/10 dark:bg-white/5 md:p-12">
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.emerald.100),white)] opacity-20 dark:bg-[radial-gradient(45rem_50rem_at_top,theme(colors.emerald.900),transparent)]" />
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/50 px-4 py-1.5 text-xs font-medium text-secondary backdrop-blur-md shadow-sm dark:border-white/10 dark:bg-white/5 ring-1 ring-inset ring-black/5 dark:ring-white/5">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-            <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent font-bold">
-              Cycle Context
-            </span>
-            <span className="text-secondary/60">•</span>
-            <span>Data-driven answer</span>
+        {/* Hero Section */}
+        <section className="mb-16 md:mb-24">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 backdrop-blur-md dark:text-emerald-400">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Market Cycle Analysis</span>
           </div>
 
-          <h1 className="mt-8 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-6xl">
+          <h1 className="max-w-4xl text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white sm:text-5xl md:text-7xl">
             Bitcoin below the{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">
-              previous ATH
+            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+              Previous ATH
             </span>
-            : how many days?
           </h1>
-
-          <p className="mt-5 max-w-3xl text-base md:text-lg leading-7 md:leading-8 text-secondary">
-            In the last major cycle, BTC briefly broke below the previous
-            cycle’s peak near{" "}
-            <span className="text-foreground font-semibold">$20k</span>. Here’s
-            the exact day count (based on daily OHLC data), plus the date range
-            and the streaks that made up the drawdown.
+          
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-500 dark:text-neutral-400 md:text-xl">
+            In the 2022 bear market, Bitcoin broke below its 2017 peak of ~$20k. 
+            We analyzed daily OHLC data to measure exactly how long it stayed in this historic zone.
           </p>
+        </section>
 
-          {errorMessage ? (
-            <div className="mt-10 rounded-2xl border border-black/10 bg-background/60 p-5 text-sm text-secondary dark:border-white/10 dark:bg-background/20">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-lg bg-amber-500/10 p-2 text-amber-600 dark:text-amber-400">
-                  <Info className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="font-medium text-foreground">
-                    Couldn’t load market data
-                  </div>
-                  <div className="mt-1">{errorMessage}</div>
-                  <div className="mt-2 text-xs text-secondary">
-                    Tip: try again later, or verify your deployment environment
-                    allows outbound requests to the data source.
-                  </div>
-                </div>
+        {errorMessage ? (
+          <div className="rounded-3xl border border-red-200 bg-red-50/50 p-8 dark:border-red-900/30 dark:bg-red-950/10">
+            <div className="flex items-start gap-4">
+              <div className="rounded-full bg-red-100 p-2 text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                <Info className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-red-900 dark:text-red-200">
+                  Data Unavailable
+                </h3>
+                <p className="mt-2 text-red-800/80 dark:text-red-300/80">{errorMessage}</p>
+                <p className="mt-4 text-sm text-red-700 dark:text-red-400">
+                  Please try again later or check your connection.
+                </p>
               </div>
             </div>
-          ) : (
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              <div className="group rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+          </div>
+        ) : (
+          <div className="space-y-20">
+            {/* Key Stats Grid */}
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+                <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
+                  <TrendingDown className="h-32 w-32" />
+                </div>
+                <div className="flex items-center gap-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
                     <TrendingDown className="h-4 w-4" />
                   </div>
-                  Previous ATH level
+                  Prior ATH Level
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
                   {data ? formatUsd(data.previousAth.athHigh.value) : "—"}
                 </div>
-                <p className="mt-2 text-sm text-secondary">
-                  Peak daily high on{" "}
-                  {data ? formatDateUtc(data.previousAth.athHigh.date) : "—"}
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  2017 intraday high ({data ? formatDateUtc(data.previousAth.athHigh.date) : "—"})
                 </p>
               </div>
 
-              <div className="group rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+                <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
+                  <BarChart3 className="h-32 w-32" />
+                </div>
+                <div className="flex items-center gap-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                     <BarChart3 className="h-4 w-4" />
                   </div>
-                  Total days (close below)
+                  Total Days Below
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
                   {data ? formatInt(data.closeBelowAthHigh.totalDays) : "—"}
                 </div>
-                <p className="mt-2 text-sm text-secondary">
-                  Across{" "}
-                  {data ? formatInt(data.closeBelowAthHigh.streaks.length) : "—"}{" "}
-                  streaks in{" "}
-                  {data?.analysisWindow.startDate
-                    ? data.analysisWindow.startDate.slice(0, 4)
-                    : "—"}
-                  –
-                  {data?.analysisWindow.endDate
-                    ? data.analysisWindow.endDate.slice(0, 4)
-                    : "—"}
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  Accumulated across {data ? formatInt(data.closeBelowAthHigh.streaks.length) : "—"} separate streaks
                 </p>
               </div>
 
-              <div className="group rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+                 <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
+                  <Clock className="h-32 w-32" />
+                </div>
+                <div className="flex items-center gap-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
                     <Clock className="h-4 w-4" />
                   </div>
-                  Longest streak
+                  Longest Streak
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
                   {strongestAnswer ? `${formatInt(strongestAnswer)} days` : "—"}
                 </div>
-                <p className="mt-2 text-sm text-secondary">
-                  {data?.closeBelowAthHigh.longestStreak
-                    ? `${formatDateUtc(
-                        data.closeBelowAthHigh.longestStreak.startDate,
-                      )} → ${formatDateUtc(data.closeBelowAthHigh.longestStreak.endDate)}`
-                    : "—"}
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  Uninterrupted daily closes
                 </p>
               </div>
             </div>
-          )}
-        </section>
 
-        <section className="mt-14 space-y-12">
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              Quick answer
-            </h2>
-            <div className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40">
-              <p className="text-secondary leading-relaxed">
-                {data?.closeBelowAthHigh.longestStreak ? (
-                  <>
-                    Using BTCUSD <span className="text-foreground font-medium">daily closes</span>{" "}
-                    versus the prior cycle’s ATH level{" "}
-                    <span className="text-foreground font-medium">
-                      ({formatUsd(data.closeBelowAthHigh.threshold)})
-                    </span>
-                    , Bitcoin’s <span className="text-foreground font-medium">longest</span>{" "}
-                    uninterrupted stretch below that level lasted{" "}
-                    <span className="text-foreground font-semibold">
-                      {formatInt(data.closeBelowAthHigh.longestStreak.days)} days
-                    </span>{" "}
-                    ({formatDateUtc(data.closeBelowAthHigh.longestStreak.startDate)} →{" "}
-                    {formatDateUtc(data.closeBelowAthHigh.longestStreak.endDate)}).
-                  </>
-                ) : (
-                  <>Load the page with market data enabled to see the computed result.</>
-                )}
-              </p>
+            {/* Insight Section */}
+            <div className="rounded-[2.5rem] border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-8 shadow-sm dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950 md:p-12">
+               <div className="flex flex-col gap-8 lg:flex-row">
+                 <div className="flex-1 space-y-6">
+                    <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
+                      The Quick Answer
+                    </h2>
+                    <div className="prose prose-neutral dark:prose-invert">
+                       <p className="text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">
+                         {data?.closeBelowAthHigh.longestStreak ? (
+                          <>
+                            Using BTCUSD <span className="font-semibold text-neutral-900 dark:text-white">daily closes</span>{" "}
+                            versus the prior cycle’s ATH, Bitcoin’s longest stretch spent below water was{" "}
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                              {formatInt(data.closeBelowAthHigh.longestStreak.days)} days
+                            </span>.
+                            <span className="mt-2 block text-base text-neutral-500 dark:text-neutral-400">
+                              This streak ran from {formatDateUtc(data.closeBelowAthHigh.longestStreak.startDate)} to {formatDateUtc(data.closeBelowAthHigh.longestStreak.endDate)}.
+                            </span>
+                          </>
+                        ) : (
+                          "Loading market analysis..."
+                        )}
+                       </p>
+                    </div>
+                 </div>
 
-              {data?.closeBelowAthHigh.spanDays !== null &&
-              data?.closeBelowAthHigh.firstBelow &&
-              data?.closeBelowAthHigh.lastBelow ? (
-                <p className="mt-3 text-xs leading-relaxed text-secondary">
-                  Context: from the <span className="text-foreground/90">first</span>{" "}
-                  close below the level ({formatDateUtc(data.closeBelowAthHigh.firstBelow.startDate)}) to the{" "}
-                  <span className="text-foreground/90">last</span>{" "}
-                  close below it ({formatDateUtc(data.closeBelowAthHigh.lastBelow.endDate)}), the span was{" "}
-                  {formatInt(data.closeBelowAthHigh.spanDays)} calendar days.
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              The streaks (top 5)
-            </h2>
-            <p className="text-secondary leading-relaxed">
-              “Stayed below” can mean different things. This table uses{" "}
-              <span className="text-foreground/90">daily close &lt; prior ATH level</span>{" "}
-              and groups consecutive days into streaks.
-            </p>
-
-            <div className="overflow-x-auto rounded-2xl border border-black/5 bg-background/50 dark:border-white/10 dark:bg-background/20">
-              <table className="w-full min-w-[720px] text-left text-sm">
-                <thead className="border-b border-black/5 bg-surface/60 text-secondary dark:border-white/10 dark:bg-surface/40">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Rank</th>
-                    <th className="px-5 py-3 font-medium">Start</th>
-                    <th className="px-5 py-3 font-medium">End</th>
-                    <th className="px-5 py-3 font-medium">Days</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data?.closeBelowAthHigh.topStreaks?.length ? (
-                    data.closeBelowAthHigh.topStreaks.map((streak, index) => (
-                      <tr
-                        key={`${streak.startDate}-${streak.endDate}-${index}`}
-                        className="border-b border-black/5 last:border-0 dark:border-white/10"
-                      >
-                        <td className="px-5 py-4 font-medium text-foreground">
-                          #{index + 1}
-                        </td>
-                        <td className="px-5 py-4 text-secondary">
-                          {formatDateUtc(streak.startDate)}
-                        </td>
-                        <td className="px-5 py-4 text-secondary">
-                          {formatDateUtc(streak.endDate)}
-                        </td>
-                        <td className="px-5 py-4 text-secondary">
-                          {formatInt(streak.days)}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className="dark:border-white/10">
-                      <td className="px-5 py-4 text-secondary" colSpan={4}>
-                        {errorMessage ? "Data unavailable." : "Loading…"}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                 <div className="flex-1 rounded-2xl border border-neutral-200 bg-white/50 p-6 dark:border-neutral-800 dark:bg-neutral-800/20">
+                    <h3 className="mb-4 font-semibold text-neutral-900 dark:text-white">
+                      Top 5 Streaks
+                    </h3>
+                    <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+                      <table className="w-full text-left text-sm">
+                        <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900/50 dark:text-neutral-400">
+                          <tr>
+                            <th className="px-4 py-3 font-medium">Rank</th>
+                            <th className="px-4 py-3 font-medium">Period</th>
+                            <th className="px-4 py-3 font-medium text-right">Duration</th>
+                          </tr>
+                        </thead>
+                         <tbody className="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900/20">
+                          {data?.closeBelowAthHigh.topStreaks?.length ? (
+                            data.closeBelowAthHigh.topStreaks.map((streak, index) => (
+                              <tr key={index} className="transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
+                                <td className="px-4 py-3 font-medium text-neutral-900 dark:text-white">#{index + 1}</td>
+                                <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400 tabular-nums">
+                                   {formatDateUtc(streak.startDate)} — {formatDateUtc(streak.endDate)}
+                                </td>
+                                <td className="px-4 py-3 text-right font-medium text-neutral-900 dark:text-white tabular-nums">
+                                  {formatInt(streak.days)} days
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                               <td colSpan={3} className="px-4 py-4 text-center text-neutral-500">
+                                 {errorMessage ? "No data available" : "Loading..."}
+                               </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                 </div>
+               </div>
             </div>
 
-            {data ? (
-              <p className="text-xs leading-relaxed text-secondary">
-                Data source: {data.source}. Analysis window:{" "}
-                {data.analysisWindow.startDate
-                  ? formatDateUtc(data.analysisWindow.startDate)
-                  : "—"}{" "}
-                →{" "}
-                {data.analysisWindow.endDate
-                  ? formatDateUtc(data.analysisWindow.endDate)
-                  : "—"}
-                .
-              </p>
-            ) : null}
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              Methodology (simple + transparent)
-            </h2>
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: "Define the level",
-                  body: data
-                    ? `Prior ATH = 2017 peak daily high (${formatUsd(
-                        data.previousAth.athHigh.value,
-                      )}) from BTCUSD daily OHLC.`
-                    : "Prior ATH = 2017 peak daily high (BTCUSD daily OHLC).",
-                  icon: <TrendingDown className="h-4 w-4 text-accent" />,
-                },
-                {
-                  title: "Choose the rule",
-                  body: "“Below” = daily close is strictly less than that level. Consecutive days are grouped into streaks.",
-                  icon: <BarChart3 className="h-4 w-4 text-accent" />,
-                },
-                {
-                  title: "Count the days",
-                  body: "Days are counted from the daily rows returned by the data source (BTC trades 24/7, so weekends are included).",
-                  icon: <CalendarDays className="h-4 w-4 text-accent" />,
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40"
-                >
-                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                    {item.icon}
-                    {item.title}
+            {/* Methodology & FAQ Grid */}
+            <div className="grid gap-12 lg:grid-cols-2">
+               {/* Methodology */}
+               <div className="space-y-8">
+                  <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                    Methodology
+                  </h2>
+                  <div className="space-y-4">
+                     {[
+                      {
+                        title: "Defining the Level",
+                        body: data ? `We use the 2017 peak intraday high of ${formatUsd(data.previousAth.athHigh.value)}.` : "We use the 2017 peak intraday high.",
+                        icon: TrendingDown
+                      },
+                      {
+                        title: "The Rule",
+                        body: "A 'day below' is counted when the daily close is strictly lower than the ATH level.",
+                        icon: BarChart3
+                      },
+                      {
+                        title: "Data Source",
+                        body: "Stooq Daily OHLC for BTCUSD. Analysis counts calendar days.",
+                        icon: CalendarDays
+                      }
+                     ].map((item, i) => (
+                        <div key={i} className="flex gap-4 rounded-xl border border-neutral-200 bg-white/60 p-5 dark:border-neutral-800 dark:bg-neutral-900/30">
+                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                             <item.icon className="h-5 w-5" />
+                           </div>
+                           <div>
+                              <h3 className="font-semibold text-neutral-900 dark:text-white">{item.title}</h3>
+                              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{item.body}</p>
+                           </div>
+                        </div>
+                     ))}
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-secondary">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-2xl border border-black/5 bg-background/50 p-6 dark:border-white/10 dark:bg-background/20">
-              <p className="text-sm leading-relaxed text-secondary">
-                Important: different exchanges and indexes can report slightly
-                different ATH values and daily closes. If you need an exact
-                replication for research, use a single data source end‑to‑end
-                (same exchange/index, same time zone cutoff) and stick to one
-                rule (close vs intraday).
-              </p>
-            </div>
-          </div>
+               </div>
 
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              FAQ
-            </h2>
-            <div className="grid gap-3">
-              {faq.map((item) => (
-                <details
-                  key={item.q}
-                  className="group rounded-2xl border border-black/5 bg-background/50 p-5 transition-colors dark:border-white/10 dark:bg-background/20"
-                >
-                  <summary className="cursor-pointer list-none text-sm font-medium text-foreground outline-none">
-                    <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      ?
-                    </span>
-                    {item.q}
-                    <span className="float-right text-secondary transition-transform group-open:rotate-45">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-secondary">
-                    {item.a}
-                  </p>
-                </details>
-              ))}
+               {/* FAQ */}
+               <div className="space-y-8">
+                 <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                    Common Questions
+                  </h2>
+                  <div className="space-y-4">
+                    {faq.map((item, i) => (
+                      <details
+                        key={i}
+                        className="group rounded-xl border border-neutral-200 bg-white/40 p-5 transition-all dark:border-neutral-800 dark:bg-neutral-900/20 open:bg-white dark:open:bg-neutral-900"
+                      >
+                        <summary className="flex cursor-pointer list-none items-center justify-between font-medium text-neutral-900 dark:text-white">
+                          {item.q}
+                          <ArrowLeft className="h-4 w-4 -rotate-90 text-neutral-400 transition-transform group-open:rotate-90" />
+                        </summary>
+                        <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                          {item.a}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
+               </div>
             </div>
-          </div>
 
-          <div className="rounded-3xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40 md:p-10">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              Track your crypto portfolio with clarity
-            </h2>
-            <p className="mt-3 max-w-2xl text-secondary leading-relaxed">
-              Want a cleaner way to follow your holdings through cycles? Track
-              assets, cost basis, and performance across portfolios—without
-              spreadsheet chaos.
-            </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/#download"
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-[color:var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-              >
-                Download the app
-              </Link>
-              <Link
-                href="/"
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-black/10 bg-background/60 px-5 py-3 text-sm font-medium text-foreground hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 dark:border-white/10 dark:bg-background/30"
-              >
-                Explore Crypto Portfolio
-              </Link>
+            {/* CTA */}
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-neutral-900 px-6 py-12 text-center shadow-2xl dark:bg-white/5 sm:px-12 md:py-20">
+               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,theme(colors.emerald.500/20),transparent)]" />
+               <div className="relative z-10 mx-auto max-w-2xl text-center">
+                 <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                   Track your portfolio with clarity
+                 </h2>
+                 <p className="mx-auto mt-4 max-w-xl text-lg text-neutral-300">
+                   Stop wrestling with spreadsheets. Track your assets, cost basis, and performance across cycles in one beautiful interface.
+                 </p>
+                 <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <Link
+                      href="/#download"
+                      className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 hover:scale-105"
+                    >
+                      Download App
+                    </Link>
+                    <Link
+                      href="/"
+                      className="inline-flex h-12 items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      Explore Features
+                    </Link>
+                 </div>
+               </div>
             </div>
           </div>
-        </section>
+        )}
 
         <script
           type="application/ld+json"

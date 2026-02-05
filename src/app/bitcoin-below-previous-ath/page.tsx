@@ -9,7 +9,7 @@ import {
   Sparkles,
   TrendingDown,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SvgLineChart, type SvgLineChartSeries } from "@/components/svg-line-chart";
 
 const title =
   "How Many Days Was Bitcoin Below the Previous All‑Time High? (2022 Bear Market)";
@@ -227,6 +227,18 @@ async function getBelowPreviousAthStats() {
   const analysisRows = await fetchStooqDaily("btcusd", "20210101", "20231231");
   const analysisRowsAsc = sortAscByDate(analysisRows);
 
+  const closePoints = analysisRowsAsc
+    .map((row) => ({ x: toUtcMs(row.date), y: row.close }))
+    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y))
+    .sort((a, b) => a.x - b.x);
+  const thresholdLine =
+    closePoints.length > 1
+      ? [
+          { x: closePoints[0].x, y: athHigh.value },
+          { x: closePoints[closePoints.length - 1].x, y: athHigh.value },
+        ]
+      : [];
+
   const closeBelowAthHighStreaks = computeBelowStreaks(
     analysisRowsAsc,
     athHigh.value,
@@ -265,6 +277,10 @@ async function getBelowPreviousAthStats() {
       startDate: analysisRowsAsc[0]?.date ?? null,
       endDate: analysisRowsAsc[analysisRowsAsc.length - 1]?.date ?? null,
     },
+    chart: {
+      closePoints,
+      thresholdLine,
+    },
     closeBelowAthHigh: {
       streaks: closeBelowAthHighStreaks,
       topStreaks,
@@ -291,6 +307,33 @@ export default async function BitcoinBelowPreviousAthPage() {
 
   const strongestAnswer =
     data?.closeBelowAthHigh.longestStreak?.days ?? null;
+
+  const chartRangeStart = data?.analysisWindow.startDate ?? null;
+  const chartRangeEnd = data?.analysisWindow.endDate ?? null;
+
+  const chartClosePoints = data?.chart.closePoints ?? null;
+  const chartThresholdLine = data?.chart.thresholdLine ?? null;
+
+  const chartSeries: SvgLineChartSeries[] = [];
+  if (chartClosePoints && chartClosePoints.length > 1) {
+    chartSeries.push({
+      id: "close",
+      label: "BTC daily close (USD)",
+      color: "#10b981",
+      points: chartClosePoints,
+      strokeWidth: 2.75,
+    });
+  }
+  if (chartThresholdLine && chartThresholdLine.length > 1) {
+    chartSeries.push({
+      id: "ath",
+      label: "2017 ATH high (level)",
+      color: "#64748b",
+      dashed: true,
+      points: chartThresholdLine,
+      strokeWidth: 2.5,
+    });
+  }
 
   const faq = [
     {
@@ -353,13 +396,9 @@ export default async function BitcoinBelowPreviousAthPage() {
         <div className="absolute -right-[20%] -bottom-[10%] h-[600px] w-[600px] rounded-full bg-blue-500/5 blur-[100px] dark:bg-blue-500/10" />
       </div>
 
-      <header className="absolute right-0 top-0 z-50 p-6">
-        <ThemeToggle />
-      </header>
-
-      <main className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-24">
+      <main className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-24">
         {/* Navigation */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <Link
             href="/"
             className="group inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/50 px-4 py-2 text-sm font-medium text-neutral-600 transition-all hover:border-emerald-500/20 hover:bg-emerald-50 hover:text-emerald-700 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-neutral-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
@@ -370,7 +409,7 @@ export default async function BitcoinBelowPreviousAthPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="mb-16 md:mb-24">
+        <section className="mb-12 sm:mb-16 md:mb-24">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 backdrop-blur-md dark:text-emerald-400">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Market Cycle Analysis</span>
@@ -383,7 +422,7 @@ export default async function BitcoinBelowPreviousAthPage() {
             </span>
           </h1>
           
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-500 dark:text-neutral-400 md:text-xl">
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:mt-8 sm:text-lg md:text-xl">
             In the 2022 bear market, Bitcoin broke below its 2017 peak of ~$20k. 
             We analyzed daily OHLC data to measure exactly how long it stayed in this historic zone.
           </p>
@@ -407,10 +446,10 @@ export default async function BitcoinBelowPreviousAthPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-20">
+          <div className="space-y-14 sm:space-y-16 md:space-y-20">
             {/* Key Stats Grid */}
             <div className="grid gap-6 md:grid-cols-3">
-              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-6 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60 sm:p-8">
                 <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
                   <TrendingDown className="h-32 w-32" />
                 </div>
@@ -420,7 +459,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                   </div>
                   Prior ATH Level
                 </div>
-                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
+                <div className="mt-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums sm:text-4xl">
                   {data ? formatUsd(data.previousAth.athHigh.value) : "—"}
                 </div>
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
@@ -428,7 +467,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                 </p>
               </div>
 
-              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-6 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60 sm:p-8">
                 <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
                   <BarChart3 className="h-32 w-32" />
                 </div>
@@ -438,7 +477,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                   </div>
                   Total Days Below
                 </div>
-                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
+                <div className="mt-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums sm:text-4xl">
                   {data ? formatInt(data.closeBelowAthHigh.totalDays) : "—"}
                 </div>
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
@@ -446,7 +485,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                 </p>
               </div>
 
-              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-8 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60">
+              <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white/40 p-6 backdrop-blur-xl transition-all hover:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/40 dark:hover:bg-neutral-900/60 sm:p-8">
                  <div className="absolute -right-6 -top-6 opacity-[0.03] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.05]">
                   <Clock className="h-32 w-32" />
                 </div>
@@ -456,7 +495,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                   </div>
                   Longest Streak
                 </div>
-                <div className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums">
+                <div className="mt-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-white tabular-nums sm:text-4xl">
                   {strongestAnswer ? `${formatInt(strongestAnswer)} days` : "—"}
                 </div>
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
@@ -465,15 +504,65 @@ export default async function BitcoinBelowPreviousAthPage() {
               </div>
             </div>
 
+            {/* Price Chart */}
+            {chartSeries.length > 0 ? (
+              <section className="rounded-[2.5rem] border border-neutral-200 bg-white/40 p-6 shadow-sm backdrop-blur-xl dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-8 md:p-10">
+                <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-bold tracking-tight text-neutral-900 dark:text-white sm:text-xl md:text-2xl">
+                      Daily close vs the previous ATH level
+                    </h2>
+                    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                      Green is BTCUSD daily close. The dashed line is the 2017 intraday high used as the threshold.
+                    </p>
+                  </div>
+
+                  {chartRangeStart && chartRangeEnd ? (
+                    <div className="w-full rounded-2xl border border-neutral-200 bg-white/50 px-4 py-2 text-center text-xs font-medium text-neutral-600 shadow-sm backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-400 sm:w-auto sm:rounded-full sm:text-left sm:whitespace-nowrap">
+                      Range: {formatDateUtc(chartRangeStart)} → {formatDateUtc(chartRangeEnd)} (UTC)
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="mb-4 flex flex-wrap items-center gap-4 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                  {chartSeries.map((line) => (
+                    <div key={line.id} className="inline-flex items-center gap-2">
+                      <span
+                        className="inline-flex h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: line.color }}
+                        aria-hidden
+                      />
+                      <span>{line.label}</span>
+                      {line.dashed ? <span className="text-neutral-500/70">(level)</span> : null}
+                    </div>
+                  ))}
+                </div>
+
+                <SvgLineChart
+                  series={chartSeries}
+                  ariaLabel="Bitcoin daily close vs the previous all-time high level"
+                  yTickCount={6}
+                  formatY={(value) => formatUsd(value)}
+                  formatX={(epochMs) =>
+                    new Intl.DateTimeFormat("en-US", {
+                      month: "short",
+                      year: "numeric",
+                      timeZone: "UTC",
+                    }).format(new Date(epochMs))
+                  }
+                />
+              </section>
+            ) : null}
+
             {/* Insight Section */}
-            <div className="rounded-[2.5rem] border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-8 shadow-sm dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950 md:p-12">
+            <div className="rounded-[2.5rem] border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-6 shadow-sm dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950 sm:p-8 md:p-12">
                <div className="flex flex-col gap-8 lg:flex-row">
                  <div className="flex-1 space-y-6">
                     <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
                       The Quick Answer
                     </h2>
                     <div className="prose prose-neutral dark:prose-invert">
-                       <p className="text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">
+                       <p className="text-base leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-lg">
                          {data?.closeBelowAthHigh.longestStreak ? (
                           <>
                             Using BTCUSD <span className="font-semibold text-neutral-900 dark:text-white">daily closes</span>{" "}
@@ -481,7 +570,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                             <span className="font-bold text-emerald-600 dark:text-emerald-400">
                               {formatInt(data.closeBelowAthHigh.longestStreak.days)} days
                             </span>.
-                            <span className="mt-2 block text-base text-neutral-500 dark:text-neutral-400">
+                            <span className="mt-2 block text-sm text-neutral-500 dark:text-neutral-400 sm:text-base">
                               This streak ran from {formatDateUtc(data.closeBelowAthHigh.longestStreak.startDate)} to {formatDateUtc(data.closeBelowAthHigh.longestStreak.endDate)}.
                             </span>
                           </>
@@ -492,12 +581,41 @@ export default async function BitcoinBelowPreviousAthPage() {
                     </div>
                  </div>
 
-                 <div className="flex-1 rounded-2xl border border-neutral-200 bg-white/50 p-6 dark:border-neutral-800 dark:bg-neutral-800/20">
+                 <div className="flex-1 rounded-2xl border border-neutral-200 bg-white/50 p-5 dark:border-neutral-800 dark:bg-neutral-800/20 sm:p-6">
                     <h3 className="mb-4 font-semibold text-neutral-900 dark:text-white">
                       Top 5 Streaks
                     </h3>
                     <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
-                      <table className="w-full text-left text-sm">
+                      <div className="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900/20 md:hidden">
+                        {data?.closeBelowAthHigh.topStreaks?.length ? (
+                          data.closeBelowAthHigh.topStreaks.map((streak, index) => (
+                            <div
+                              key={index}
+                              className="flex items-start justify-between gap-4 px-4 py-3"
+                            >
+                              <div className="min-w-0">
+                                <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                  #{index + 1}
+                                </div>
+                                <div className="mt-1 text-xs text-neutral-600 dark:text-neutral-400 tabular-nums">
+                                  {formatDateUtc(streak.startDate)} → {formatDateUtc(streak.endDate)}
+                                </div>
+                              </div>
+                              <div className="shrink-0 text-right">
+                                <div className="text-sm font-semibold text-neutral-900 dark:text-white tabular-nums">
+                                  {formatInt(streak.days)} days
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-4 py-4 text-center text-sm text-neutral-500">
+                            {errorMessage ? "No data available" : "Loading..."}
+                          </div>
+                        )}
+                      </div>
+
+                      <table className="hidden w-full text-left text-sm md:table">
                         <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900/50 dark:text-neutral-400">
                           <tr>
                             <th className="px-4 py-3 font-medium">Rank</th>
@@ -533,10 +651,10 @@ export default async function BitcoinBelowPreviousAthPage() {
             </div>
 
             {/* Methodology & FAQ Grid */}
-            <div className="grid gap-12 lg:grid-cols-2">
+            <div className="grid gap-10 lg:grid-cols-2 md:gap-12">
                {/* Methodology */}
                <div className="space-y-8">
-                  <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-2xl">
                     Methodology
                   </h2>
                   <div className="space-y-4">
@@ -557,7 +675,7 @@ export default async function BitcoinBelowPreviousAthPage() {
                         icon: CalendarDays
                       }
                      ].map((item, i) => (
-                        <div key={i} className="flex gap-4 rounded-xl border border-neutral-200 bg-white/60 p-5 dark:border-neutral-800 dark:bg-neutral-900/30">
+                        <div key={i} className="flex gap-4 rounded-xl border border-neutral-200 bg-white/60 p-4 dark:border-neutral-800 dark:bg-neutral-900/30 sm:p-5">
                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                              <item.icon className="h-5 w-5" />
                            </div>
@@ -572,18 +690,18 @@ export default async function BitcoinBelowPreviousAthPage() {
 
                {/* FAQ */}
                <div className="space-y-8">
-                 <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                 <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-2xl">
                     Common Questions
                   </h2>
                   <div className="space-y-4">
                     {faq.map((item, i) => (
                       <details
                         key={i}
-                        className="group rounded-xl border border-neutral-200 bg-white/40 p-5 transition-all dark:border-neutral-800 dark:bg-neutral-900/20 open:bg-white dark:open:bg-neutral-900"
+                        className="group rounded-xl border border-neutral-200 bg-white/40 p-4 transition-all dark:border-neutral-800 dark:bg-neutral-900/20 open:bg-white dark:open:bg-neutral-900 sm:p-5"
                       >
-                        <summary className="flex cursor-pointer list-none items-center justify-between font-medium text-neutral-900 dark:text-white">
+                        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-medium text-neutral-900 dark:text-white">
                           {item.q}
-                          <ArrowLeft className="h-4 w-4 -rotate-90 text-neutral-400 transition-transform group-open:rotate-90" />
+                          <ArrowLeft className="mt-0.5 h-4 w-4 shrink-0 -rotate-90 text-neutral-400 transition-transform group-open:rotate-90" />
                         </summary>
                         <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
                           {item.a}

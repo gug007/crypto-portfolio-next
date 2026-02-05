@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <header className="absolute top-0 right-0 p-6 z-10">
-        <ThemeToggle />
-      </header>
       <main className="container mx-auto px-6 py-20 md:py-32 max-w-4xl">
         <Link 
           href="/" 

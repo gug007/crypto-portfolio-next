@@ -36,6 +36,11 @@ export function Footer() {
                  </Link>
                </li>
                <li>
+                 <Link href="/microstrategy-bitcoin-average-price" className="hover:underline hover:text-foreground transition-colors">
+                   MicroStrategy BTC Avg Price
+                 </Link>
+               </li>
+               <li>
                  <a href="#download" className="hover:underline hover:text-foreground transition-colors">
                    Download App
                  </a>

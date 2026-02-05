@@ -1,15 +1,10 @@
-import Link from "next/link";
 import Image from "next/image";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { TypewriterText } from "@/components/typewriter-text";
 import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <header className="absolute top-0 right-0 p-6 z-10">
-        <ThemeToggle />
-      </header>
       {/* Hero Section */}
       <main>
         <section className="px-6 py-20 md:py-32">

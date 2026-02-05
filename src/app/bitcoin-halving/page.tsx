@@ -10,7 +10,6 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { HalvingCountdown } from "@/components/halving-countdown";
 
 const title = "Bitcoin Halving: What It Is, Dates, History, and Why It Matters";
@@ -163,10 +162,6 @@ export default function BitcoinHalvingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <header className="absolute top-0 right-0 p-6 z-10">
-        <ThemeToggle />
-      </header>
-
       <main className="mx-auto max-w-6xl px-6 py-12 md:py-28">
         <Link
           href="/"

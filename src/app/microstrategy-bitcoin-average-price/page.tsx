@@ -5,7 +5,7 @@ import { SvgLineChart, type SvgLineChartSeries } from "@/components/svg-line-cha
 
 const title = "MicroStrategy’s Average Bitcoin Purchase Price vs Bitcoin Price";
 const description =
-  "One chart with two lines: Bitcoin’s historical USD price and MicroStrategy’s average BTC purchase price (average cost per BTC), based on Stooq BTCUSD daily closes and SEC EDGAR 8‑K disclosures.";
+  "One chart with two lines: Bitcoin’s historical USD price and MicroStrategy’s average BTC purchase price (average cost per BTC), based on Stooq BTCUSD daily closes and SEC EDGAR filings (8‑K / 10‑Q / 10‑K).";
 
 export const metadata: Metadata = {
   title,
@@ -50,14 +50,22 @@ type StooqOhlcRow = {
   volume: number | null;
 };
 
+type SecSubmissionsRecent = {
+  accessionNumber?: string[];
+  filingDate?: string[];
+  form?: string[];
+  primaryDocument?: string[];
+};
+
 type SecSubmissionsResponse = {
   filings?: {
-    recent?: {
-      accessionNumber?: string[];
-      filingDate?: string[];
-      form?: string[];
-      primaryDocument?: string[];
-    };
+    recent?: SecSubmissionsRecent;
+    files?: Array<{
+      name?: string;
+      filingFrom?: string;
+      filingTo?: string;
+      filingCount?: number;
+    }>;
   };
 };
 
@@ -76,6 +84,10 @@ type MstrTreasurySnapshot = {
   totalHoldingsBtc: number;
   totalEntryValueUsd: number;
   avgPurchasePriceUsd: number;
+};
+
+type MstrTreasurySnapshotPoint = MstrTreasurySnapshot & {
+  xUtcMs: number;
 };
 
 const MSTR_START_DATE_UTC_MS = Date.UTC(2020, 7, 1); // Aug 1, 2020 (UTC)
@@ -103,6 +115,76 @@ function toUtcMsFromIsoDate(isoDate: string) {
     throw new Error(`Invalid date: ${isoDate}`);
   }
   return Date.UTC(year, month - 1, day);
+}
+
+const MONTH_NAME_TO_INDEX: Record<string, number> = {
+  jan: 0,
+  january: 0,
+  feb: 1,
+  february: 1,
+  mar: 2,
+  march: 2,
+  apr: 3,
+  april: 3,
+  may: 4,
+  jun: 5,
+  june: 5,
+  jul: 6,
+  july: 6,
+  aug: 7,
+  august: 7,
+  sep: 8,
+  sept: 8,
+  september: 8,
+  oct: 9,
+  october: 9,
+  nov: 10,
+  november: 10,
+  dec: 11,
+  december: 11,
+};
+
+function parseAsOfDateLabelToUtcMs(label: string) {
+  const trimmed = label.trim();
+
+  const monthNameMatch = trimmed.match(
+    /^([A-Za-z]+)\s+(\d{1,2})(?:,)?\s*(\d{4})$/,
+  );
+  if (monthNameMatch) {
+    const monthIndex = MONTH_NAME_TO_INDEX[monthNameMatch[1].toLowerCase()];
+    const day = Number(monthNameMatch[2]);
+    const year = Number(monthNameMatch[3]);
+    if (monthIndex !== undefined && Number.isFinite(day) && Number.isFinite(year)) {
+      return Date.UTC(year, monthIndex, day);
+    }
+  }
+
+  const slashedMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashedMatch) {
+    const month = Number(slashedMatch[1]);
+    const day = Number(slashedMatch[2]);
+    const year = Number(slashedMatch[3]);
+    if (Number.isFinite(month) && Number.isFinite(day) && Number.isFinite(year)) {
+      return Date.UTC(year, month - 1, day);
+    }
+  }
+
+  return null;
+}
+
+function getTreasurySnapshotUtcMs(snapshot: MstrTreasurySnapshot) {
+  if (snapshot.asOfDateLabel) {
+    const parsed = parseAsOfDateLabelToUtcMs(snapshot.asOfDateLabel);
+    if (parsed !== null) return parsed;
+  }
+  if (snapshot.filingDateIso) {
+    try {
+      return toUtcMsFromIsoDate(snapshot.filingDateIso);
+    } catch {
+      // ignore
+    }
+  }
+  return null;
 }
 
 function formatUtcYyyymmdd(date: Date) {
@@ -251,14 +333,16 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
   const text = normalizeHtmlText(html);
 
   const asOfPatterns = [
-    /\bAs of\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})\b/i,
+    /\bAs of\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})\b/i,
     /\bAs of\s+(\d{1,2}\/\d{1,2}\/\d{4})\b/i,
   ];
 
   const holdingsPatterns = [
     /\bheld\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b/i,
     /\bholds?\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b/i,
+    /\bhad\s+(?:an\s+aggregate\s+of\s+|a\s+total\s+of\s+)?(?:approximately\s+)?([\d,]+)\s+(?:btc|bitcoins?)\b/i,
     /\bbitcoin\s+holdings[^0-9]{0,40}?(?:approximately\s+)?([\d,]+)\s*(?:btc|bitcoins?)\b/i,
+    /\btotal\s+bitcoin\s+holdings\s+(?:were|was)\s+(?:approximately\s+)?([\d,]+)\s*(?:btc|bitcoins?)\b/i,
   ];
 
   const entryPatterns = [
@@ -269,6 +353,8 @@ function extractMstrBtcStatsFromSecFilingHtml(html: string) {
   const avgPatterns = [
     /\baverage(?:\s+purchase)?\s+(?:price|cost)[^$]{0,120}?\$\s*([\d,]+(?:\.\d+)?)\s+per\s+(?:bitcoin|btc)\b/i,
     /\baverage(?:\s+purchase)?\s+(?:price|cost)\s+per\s+(?:bitcoin|btc)[^$]{0,120}?\$\s*([\d,]+(?:\.\d+)?)\b/i,
+    /\baverage\s+cost\s+basis\b[^$]{0,120}?\$\s*([\d,]+(?:\.\d+)?)\s+per\s+(?:bitcoin|btc)\b/i,
+    /\baverage\s+cost\s+basis\s+per\s+(?:bitcoin|btc)[^$]{0,120}?\$\s*([\d,]+(?:\.\d+)?)\b/i,
   ];
 
   const MIN_AVG_USD = 1_000;
@@ -524,72 +610,272 @@ async function tryExtractMstrFromSecAccession(accessionNumber: string, primaryDo
   return null;
 }
 
-async function fetchMicroStrategyBtcCostBasisPerBtcUsd(): Promise<MstrTreasurySnapshot> {
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  mapper: (item: T, index: number) => Promise<R>,
+) {
+  const safeConcurrency = Math.max(1, Math.floor(concurrency));
+  const results: R[] = new Array(items.length);
+  let nextIndex = 0;
+
+  const workers = Array.from({ length: Math.min(safeConcurrency, items.length) }, async () => {
+    while (nextIndex < items.length) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+}
+
+function isEightKForm(form: string) {
+  return form.startsWith("8-K");
+}
+
+function isTreasuryDisclosureForm(form: string) {
+  return (
+    isEightKForm(form) ||
+    form.startsWith("10-Q") ||
+    form.startsWith("10-K")
+  );
+}
+
+function getMonthKeyFromIsoDate(isoDate: string) {
+  return isoDate.slice(0, 7); // YYYY-MM
+}
+
+async function fetchMicroStrategyBtcCostBasisHistory(): Promise<MstrTreasurySnapshotPoint[]> {
   const submissions = await fetchSecJson<SecSubmissionsResponse>(
     `https://data.sec.gov/submissions/CIK${SEC_CIK}.json`,
   );
 
-  const recent = submissions.filings?.recent;
-  const forms = recent?.form ?? [];
-  const accessionNumbers = recent?.accessionNumber ?? [];
-  const filingDates = recent?.filingDate ?? [];
-  const primaryDocuments = recent?.primaryDocument ?? [];
+  const startIsoDate = "2020-08-01";
+  const recentDaysIncludeAll = 180;
+  const recentCutoffIsoDate = new Date(Date.now() - recentDaysIncludeAll * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+  const maxSelectedFilings = 200;
 
-  const scanLength = Math.min(
-    forms.length,
-    accessionNumbers.length,
-    filingDates.length,
-    primaryDocuments.length,
-  );
+  type FilingRef = {
+    accessionNumber: string;
+    filingDateIso: string | null;
+    primaryDocument: string | null;
+    form: string;
+  };
 
-  const eightKIndices: number[] = [];
-  for (let i = 0; i < scanLength; i += 1) {
-    const form = forms[i];
-    const accessionNumber = accessionNumbers[i];
-    if (!form || !accessionNumber) continue;
-    if (!form.startsWith("8-K")) continue;
-    eightKIndices.push(i);
-    if (eightKIndices.length >= 20) break;
+  const buildFilingRefsFromRecent = (recent?: SecSubmissionsRecent): FilingRef[] => {
+    if (!recent) return [];
+
+    const forms = recent.form ?? [];
+    const accessionNumbers = recent.accessionNumber ?? [];
+    const filingDates = recent.filingDate ?? [];
+    const primaryDocuments = recent.primaryDocument ?? [];
+
+    const scanLength = Math.min(forms.length, accessionNumbers.length);
+    const refs: FilingRef[] = [];
+    for (let i = 0; i < scanLength; i += 1) {
+      const form = forms[i] ?? "";
+      const accessionNumber = accessionNumbers[i];
+      if (!accessionNumber || !form) continue;
+      refs.push({
+        accessionNumber,
+        filingDateIso: filingDates[i] ?? null,
+        primaryDocument: primaryDocuments[i] ?? null,
+        form,
+      });
+    }
+    return refs;
+  };
+
+  const allFilings: FilingRef[] = [];
+  allFilings.push(...buildFilingRefsFromRecent(submissions.filings?.recent));
+
+  const supplementalFileRanges = (submissions.filings?.files ?? [])
+    .map((file) => ({
+      name: typeof file.name === "string" ? file.name : null,
+      filingFrom: typeof file.filingFrom === "string" ? file.filingFrom : null,
+      filingTo: typeof file.filingTo === "string" ? file.filingTo : null,
+    }))
+    .filter(
+      (file): file is { name: string; filingFrom: string | null; filingTo: string | null } =>
+        file.name !== null,
+    )
+    .filter((file) => !file.filingTo || file.filingTo >= startIsoDate)
+    .sort((a, b) => (b.filingTo ?? "").localeCompare(a.filingTo ?? ""));
+
+  const supplementalFiles: Array<{ name: string }> = [];
+  let earliestCoveredIso: string | null = null;
+  const maxSupplementalFilesToFetch = 80;
+
+  for (const file of supplementalFileRanges) {
+    supplementalFiles.push({ name: file.name });
+    const candidateEarliest = file.filingFrom ?? file.filingTo;
+    if (candidateEarliest) {
+      earliestCoveredIso =
+        earliestCoveredIso === null
+          ? candidateEarliest
+          : candidateEarliest.localeCompare(earliestCoveredIso) < 0
+            ? candidateEarliest
+            : earliestCoveredIso;
+    }
+
+    if (earliestCoveredIso !== null && earliestCoveredIso <= startIsoDate) break;
+    if (supplementalFiles.length >= maxSupplementalFilesToFetch) break;
   }
 
-  for (const i of eightKIndices) {
-    const accessionNumber = accessionNumbers[i];
-    if (!accessionNumber) continue;
+  if (supplementalFiles.length > 0) {
+    const supplementalResults = await mapWithConcurrency(supplementalFiles, 2, async (file) => {
+      try {
+        const fileRes = await fetchSecJson<SecSubmissionsResponse>(
+          `https://data.sec.gov/submissions/${file.name}`,
+        );
+        return buildFilingRefsFromRecent(fileRes.filings?.recent);
+      } catch {
+        return [];
+      }
+    });
 
-    const extractedRes = await tryExtractMstrFromSecAccession(
-      accessionNumber,
-      primaryDocuments[i] ?? null,
+    for (const refs of supplementalResults) {
+      allFilings.push(...refs);
+    }
+  }
+
+  allFilings.sort((a, b) => (b.filingDateIso ?? "").localeCompare(a.filingDateIso ?? ""));
+
+  const selected: FilingRef[] = [];
+  const monthSampleCounts = new Map<string, number>();
+  const seenAccessionNumbers = new Set<string>();
+  const maxSampledFilingsPerMonth = 2;
+
+  for (const filing of allFilings) {
+    const form = filing.form;
+    const accessionNumber = filing.accessionNumber;
+    if (!accessionNumber || !form || !isTreasuryDisclosureForm(form)) continue;
+    if (seenAccessionNumbers.has(accessionNumber)) continue;
+
+    const filingDateIso = filing.filingDateIso;
+    if (filingDateIso && filingDateIso < startIsoDate) break;
+
+    if (selected.length >= maxSelectedFilings) break;
+
+    if (filingDateIso && filingDateIso >= recentCutoffIsoDate) {
+      selected.push(filing);
+      seenAccessionNumbers.add(accessionNumber);
+      continue;
+    }
+
+    const monthKey = filingDateIso ? getMonthKeyFromIsoDate(filingDateIso) : null;
+    if (monthKey) {
+      const count = monthSampleCounts.get(monthKey) ?? 0;
+      if (count >= maxSampledFilingsPerMonth) continue;
+      selected.push(filing);
+      monthSampleCounts.set(monthKey, count + 1);
+      seenAccessionNumbers.add(accessionNumber);
+    }
+  }
+
+  let lastError: Error | null = null;
+
+  const snapshots = await mapWithConcurrency(selected, 2, async (filing) => {
+    try {
+      const extractedRes = await tryExtractMstrFromSecAccession(
+        filing.accessionNumber,
+        filing.primaryDocument,
+      );
+      if (!extractedRes) return null;
+      const extracted = extractedRes.extracted;
+
+      return {
+        name: "MicroStrategy",
+        symbol: "MSTR",
+        asOfDateLabel: extracted.asOfDateLabel,
+        filingDateIso: filing.filingDateIso,
+        sourceUrl: extractedRes.sourceUrl,
+        totalHoldingsBtc: extracted.totalHoldingsBtc,
+        totalEntryValueUsd: extracted.totalEntryValueUsd,
+        avgPurchasePriceUsd: extracted.avgPurchasePriceUsd,
+      } satisfies MstrTreasurySnapshot;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error("SEC filing request failed");
+      return null;
+    }
+  });
+
+  const points = snapshots
+    .filter((snapshot): snapshot is MstrTreasurySnapshot => snapshot !== null)
+    .map((snapshot) => {
+      const xUtcMs = getTreasurySnapshotUtcMs(snapshot);
+      if (xUtcMs === null) return null;
+      return { ...snapshot, xUtcMs } satisfies MstrTreasurySnapshotPoint;
+    })
+    .filter((snapshot): snapshot is MstrTreasurySnapshotPoint => snapshot !== null);
+
+  if (points.length === 0) {
+    throw lastError ?? new Error(
+      "Could not extract MicroStrategy’s Bitcoin holdings / average purchase price from recent SEC filings.",
     );
-
-    if (!extractedRes) continue;
-    const extracted = extractedRes.extracted;
-
-    return {
-      name: "MicroStrategy",
-      symbol: "MSTR",
-      asOfDateLabel: extracted.asOfDateLabel,
-      filingDateIso: filingDates[i] ?? null,
-      sourceUrl: extractedRes.sourceUrl,
-      totalHoldingsBtc: extracted.totalHoldingsBtc,
-      totalEntryValueUsd: extracted.totalEntryValueUsd,
-      avgPurchasePriceUsd: extracted.avgPurchasePriceUsd,
-    };
   }
 
-  throw new Error(
-    "Could not extract MicroStrategy’s Bitcoin holdings / average purchase price from recent SEC filings.",
-  );
+  const byDate = new Map<number, MstrTreasurySnapshotPoint>();
+  for (const point of points) {
+    const existing = byDate.get(point.xUtcMs);
+    if (!existing || point.totalHoldingsBtc > existing.totalHoldingsBtc) {
+      byDate.set(point.xUtcMs, point);
+    }
+  }
+
+  return [...byDate.values()].sort((a, b) => a.xUtcMs - b.xUtcMs);
+}
+
+function buildStepPointsFromTreasuryHistory(
+  historyAsc: MstrTreasurySnapshotPoint[],
+  startXUtcMs: number,
+  endXUtcMs: number,
+) {
+  if (historyAsc.length === 0) return [];
+  if (!Number.isFinite(startXUtcMs) || !Number.isFinite(endXUtcMs)) return [];
+  if (endXUtcMs <= startXUtcMs) return [];
+
+  let startIndex = 0;
+  for (let i = 0; i < historyAsc.length; i += 1) {
+    if (historyAsc[i].xUtcMs <= startXUtcMs) startIndex = i;
+    else break;
+  }
+
+  let current = historyAsc[startIndex];
+  const initialX = Math.max(startXUtcMs, current.xUtcMs);
+  if (initialX > endXUtcMs) return [];
+
+  const points: Array<{ x: number; y: number }> = [
+    { x: initialX, y: current.avgPurchasePriceUsd },
+  ];
+
+  for (const next of historyAsc.slice(startIndex + 1)) {
+    if (next.xUtcMs < startXUtcMs) continue;
+    if (next.xUtcMs > endXUtcMs) break;
+
+    points.push({ x: next.xUtcMs, y: current.avgPurchasePriceUsd });
+    points.push({ x: next.xUtcMs, y: next.avgPurchasePriceUsd });
+    current = next;
+  }
+
+  points.push({ x: endXUtcMs, y: current.avgPurchasePriceUsd });
+  return points;
 }
 
 export default async function MicroStrategyBitcoinAveragePricePage() {
   let btcPoints: Array<{ x: number; y: number }> | null = null;
-  let treasury: MstrTreasurySnapshot | null = null;
+  let treasuryHistory: MstrTreasurySnapshotPoint[] | null = null;
+  let treasuryLatest: MstrTreasurySnapshotPoint | null = null;
   let errorMessage: string | null = null;
   let treasuryWarning: string | null = null;
 
   const [btcResult, treasuryResult] = await Promise.allSettled([
     fetchBtcUsdDailyPricesSinceMstrFirstBuy(),
-    fetchMicroStrategyBtcCostBasisPerBtcUsd(),
+    fetchMicroStrategyBtcCostBasisHistory(),
   ]);
 
   if (btcResult.status === "fulfilled") {
@@ -600,7 +886,13 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
   }
 
   if (treasuryResult.status === "fulfilled") {
-    treasury = treasuryResult.value;
+    treasuryHistory = treasuryResult.value;
+    treasuryLatest =
+      treasuryHistory.length > 0 ? treasuryHistory[treasuryHistory.length - 1] : null;
+    if (!treasuryLatest) {
+      treasuryWarning =
+        "No MicroStrategy treasury snapshots were extracted from the SEC filings scanned.";
+    }
   } else {
     const reason = treasuryResult.reason;
     treasuryWarning =
@@ -623,26 +915,32 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
     });
   }
 
-  if (treasury && firstBtc && latestBtc) {
+  if (treasuryHistory && treasuryHistory.length > 0 && firstBtc && latestBtc) {
+    const mstrPoints = buildStepPointsFromTreasuryHistory(
+      treasuryHistory,
+      firstBtc.x,
+      latestBtc.x,
+    );
+
     series.push({
       id: "mstr",
       label: "MicroStrategy avg purchase price (USD/BTC)",
       color: "#22c55e",
       dashed: true,
-      points: [
-        { x: firstBtc.x, y: treasury.avgPurchasePriceUsd },
-        { x: latestBtc.x, y: treasury.avgPurchasePriceUsd },
-      ],
+      points: mstrPoints,
       strokeWidth: 2.5,
     });
   }
 
   let premiumUsd: number | null = null;
   let premiumPct: number | null = null;
+  const DAY_MS = 86_400_000;
+  const treasuryStalenessDays =
+    latestBtc && treasuryLatest ? Math.floor((latestBtc.x - treasuryLatest.xUtcMs) / DAY_MS) : null;
 
-  if (latestBtc && treasury) {
-    premiumUsd = latestBtc.y - treasury.avgPurchasePriceUsd;
-    premiumPct = (premiumUsd / treasury.avgPurchasePriceUsd) * 100;
+  if (latestBtc && treasuryLatest) {
+    premiumUsd = latestBtc.y - treasuryLatest.avgPurchasePriceUsd;
+    premiumPct = (premiumUsd / treasuryLatest.avgPurchasePriceUsd) * 100;
   }
 
   return (
@@ -680,7 +978,7 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-secondary md:text-lg">
             One chart, two lines: Bitcoin’s daily USD market price and MicroStrategy’s average{" "}
-            BTC cost basis per BTC (from SEC EDGAR 8‑K disclosures).
+            BTC cost basis per BTC (from SEC EDGAR disclosures).
           </p>
         </section>
 
@@ -721,7 +1019,7 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
           </div>
         ) : null}
 
-        {!errorMessage && latestBtc && treasury ? (
+        {!errorMessage && latestBtc && treasuryLatest ? (
           <section className="mb-10 grid gap-4 md:mb-12 md:grid-cols-3">
             <div className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center gap-2 text-sm font-semibold text-secondary">
@@ -742,22 +1040,30 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
                 MicroStrategy avg purchase price
               </div>
               <div className="mt-3 text-3xl font-bold tracking-tight">
-                {formatUsd(treasury.avgPurchasePriceUsd)}
+                {formatUsd(treasuryLatest.avgPurchasePriceUsd)}
               </div>
               <div className="mt-1 text-sm text-secondary">
-                {treasury.totalHoldingsBtc.toLocaleString("en-US")} BTC held (per SEC EDGAR 8‑K)
+                {treasuryLatest.totalHoldingsBtc.toLocaleString("en-US")} BTC held (per SEC EDGAR filing)
               </div>
-              {treasury.asOfDateLabel || treasury.filingDateIso ? (
+              {treasuryLatest.asOfDateLabel || treasuryLatest.filingDateIso ? (
                 <div className="mt-1 text-xs text-secondary/80">
                   As of{" "}
-                  {treasury.asOfDateLabel ??
-                    (treasury.filingDateIso
-                      ? formatDateUtc(toUtcMsFromIsoDate(treasury.filingDateIso))
-                      : "—")}
+                  {treasuryLatest.asOfDateLabel
+                    ? (parseAsOfDateLabelToUtcMs(treasuryLatest.asOfDateLabel)
+                        ? formatDateUtc(parseAsOfDateLabelToUtcMs(treasuryLatest.asOfDateLabel)!)
+                        : treasuryLatest.asOfDateLabel)
+                    : (treasuryLatest.filingDateIso
+                        ? formatDateUtc(toUtcMsFromIsoDate(treasuryLatest.filingDateIso))
+                        : formatDateUtc(treasuryLatest.xUtcMs))}
+                </div>
+              ) : null}
+              {treasuryStalenessDays !== null && treasuryStalenessDays > 10 ? (
+                <div className="mt-1 text-xs text-secondary/70">
+                  Treasury data lags the BTC price series by ~{treasuryStalenessDays} days.
                 </div>
               ) : null}
               <a
-                href={treasury.sourceUrl}
+                href={treasuryLatest.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 inline-flex text-xs font-medium text-secondary hover:text-foreground transition-colors"
@@ -795,8 +1101,10 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
                       aria-hidden
                     />
                     <span>{line.label}</span>
-                    {line.dashed ? (
-                      <span className="text-secondary/60">(avg)</span>
+                    {line.id === "mstr" ? (
+                      <span className="text-secondary/60">
+                        ({treasuryHistory?.length ?? 0} snapshots)
+                      </span>
                     ) : null}
                   </div>
                 ))}
@@ -804,7 +1112,18 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
 
               {firstBtc && latestBtc ? (
                 <div className="text-xs text-secondary">
-                  Range: {formatDateUtc(firstBtc.x)} → {formatDateUtc(latestBtc.x)} (UTC)
+                  <div>
+                    Range: {formatDateUtc(firstBtc.x)} → {formatDateUtc(latestBtc.x)} (UTC)
+                  </div>
+                  {treasuryHistory && treasuryHistory.length > 0 ? (
+                    <div className="mt-0.5 text-secondary/70">
+                      MSTR snapshots: {formatDateUtc(treasuryHistory[0].xUtcMs)} →{" "}
+                      {formatDateUtc(
+                        treasuryHistory[treasuryHistory.length - 1].xUtcMs,
+                      )}{" "}
+                      (UTC)
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -824,7 +1143,7 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
           </section>
         ) : null}
 
-        {!errorMessage && latestBtc && treasury ? (
+        {!errorMessage && latestBtc && treasuryLatest ? (
           <section className="rounded-3xl border border-black/5 bg-background/60 p-8 text-sm leading-relaxed text-secondary shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
             <h2 className="text-base font-semibold text-foreground">
               Methodology & data sources
@@ -836,13 +1155,13 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
               </li>
               <li>
                 <span className="font-medium text-foreground">MicroStrategy avg purchase price:</span>{" "}
-                extracted from the most recent SEC EDGAR Form 8‑K that reports Bitcoin holdings and an average purchase
-                price per BTC.
+                extracted from multiple SEC EDGAR filings (8‑K / 10‑Q / 10‑K) that disclose (1) BTC holdings and (2) an
+                average purchase price per BTC. The line is rendered as a step series between disclosure dates.
               </li>
               <li>
                 <span className="font-medium text-foreground">Note:</span>{" "}
-                The MicroStrategy line is flat because it represents the current average cost basis per BTC (not a full
-                historical time series of every purchase).
+                Disclosure timing can lag purchases. If there are no filings for a period, the average cost line will
+                remain flat until the next disclosure.
               </li>
             </ul>
 

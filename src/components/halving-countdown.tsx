@@ -20,11 +20,13 @@ function formatNumber(value: number) {
 
 function splitDuration(ms: number) {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const days = Math.floor(totalSeconds / 86400);
+  const totalDays = Math.floor(totalSeconds / 86400);
+  const years = Math.floor(totalDays / 365);
+  const days = totalDays % 365;
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  return { days, hours, minutes, seconds };
+  return { years, days, hours, minutes, seconds };
 }
 
 export function HalvingCountdown() {
@@ -118,29 +120,25 @@ export function HalvingCountdown() {
       {data && duration ? (
         <div className="mt-10">
           {/* Main Counter */}
-          <div className="grid gap-4 md:grid-cols-[2fr_3fr] md:items-end">
-             <div className="flex flex-col items-center md:items-start">
-                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-6xl font-bold leading-none tracking-tighter text-transparent sm:text-8xl md:text-9xl">
+          <div className="flex flex-row items-center justify-center gap-8 sm:gap-12 md:gap-16 py-6">
+             <div className="flex flex-col items-center">
+                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-7xl font-bold leading-none tracking-tighter text-transparent sm:text-8xl md:text-9xl">
+                  {duration.years}
+                </span>
+                <span className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+                  Years
+                </span>
+             </div>
+
+             <div className="h-20 w-px bg-gradient-to-b from-transparent via-foreground/20 to-transparent sm:h-24 md:h-32" />
+
+             <div className="flex flex-col items-center">
+                <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-7xl font-bold leading-none tracking-tighter text-transparent sm:text-8xl md:text-9xl">
                   {duration.days}
                 </span>
-                <span className="mt-2 text-lg font-medium text-secondary">Isolate Days Remaining</span>
-             </div>
-             
-             <div className="grid w-full grid-cols-3 gap-2 sm:gap-4">
-                {[
-                  { label: "Hours", value: duration.hours },
-                  { label: "Minutes", value: duration.minutes },
-                  { label: "Seconds", value: duration.seconds },
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col items-center justify-center rounded-2xl bg-white/40 p-3 ring-1 ring-white/50 backdrop-blur-md dark:bg-white/5 dark:ring-white/5">
-                    <span className="text-2xl font-semibold tabular-nums tracking-tight text-foreground sm:text-3xl">
-                      {item.value.toString().padStart(2, '0')}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-secondary/70">
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
+                <span className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+                  Days
+                </span>
              </div>
           </div>
 

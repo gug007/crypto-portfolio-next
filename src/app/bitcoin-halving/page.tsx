@@ -167,7 +167,7 @@ export default function BitcoinHalvingPage() {
         <ThemeToggle />
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-12 md:py-28">
+      <main className="mx-auto max-w-6xl px-6 py-12 md:py-28">
         <Link
           href="/"
           className="text-secondary hover:text-foreground transition-colors mb-8 md:mb-10 inline-flex items-center gap-2 text-sm md:text-base"

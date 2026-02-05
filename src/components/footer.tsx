@@ -31,6 +31,11 @@ export function Footer() {
                  </Link>
                </li>
                <li>
+                 <Link href="/bitcoin-below-previous-ath" className="hover:underline hover:text-foreground transition-colors">
+                   Bitcoin Below Prior ATH
+                 </Link>
+               </li>
+               <li>
                  <a href="#download" className="hover:underline hover:text-foreground transition-colors">
                    Download App
                  </a>

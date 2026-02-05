@@ -112,6 +112,18 @@ function formatDateUtc(epochMs: number) {
   }).format(new Date(epochMs));
 }
 
+function formatDateTimeUtc(epochMs: number) {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  }).format(new Date(epochMs));
+}
+
 function toUtcMsFromIsoDate(isoDate: string) {
   const [year, month, day] = isoDate.split("-").map((part) => Number(part));
   if (
@@ -266,6 +278,37 @@ async function fetchStooqDaily(symbol: string, d1: string, d2: string) {
   }
 
   return parsed;
+}
+
+type BtcSpotPrice = {
+  priceUsd: number;
+  fetchedAtUtcMs: number;
+  source: "Coinbase";
+};
+
+async function fetchBtcUsdSpotPrice(): Promise<BtcSpotPrice> {
+  const res = await fetch("https://api.coinbase.com/v2/prices/BTC-USD/spot", {
+    next: { revalidate: 60 }, // 1 minute
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "crypto-portfolio-tracker.app",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Bitcoin spot price request failed (${res.status})`);
+  }
+
+  const json: unknown = await res.json();
+  const amount = (json as { data?: { amount?: unknown } } | null)?.data?.amount;
+  const parsed =
+    typeof amount === "string" ? Number.parseFloat(amount) : Number.NaN;
+
+  if (!Number.isFinite(parsed)) {
+    throw new Error("Unexpected Bitcoin spot price response format");
+  }
+
+  return { priceUsd: parsed, fetchedAtUtcMs: Date.now(), source: "Coinbase" };
 }
 
 async function fetchBtcUsdDailyPricesSinceMstrFirstBuy() {
@@ -1105,24 +1148,32 @@ function buildStepPointsFromTreasuryHistory(
 
 export default async function MicroStrategyBitcoinAveragePricePage() {
   let btcPoints: Array<{ x: number; y: number }> | null = null;
+  let btcSpot: BtcSpotPrice | null = null;
   let treasuryHistory: MstrTreasurySnapshotPoint[] | null = null;
   let treasuryLatest: MstrTreasurySnapshotPoint | null = null;
   let errorMessage: string | null = null;
+  let btcWarning: string | null = null;
   let treasuryWarning: string | null = null;
 
-  const [btcResult, treasuryResult] = await Promise.allSettled([
+  const [btcDailyResult, btcSpotResult, treasuryResult] =
+    await Promise.allSettled([
     fetchBtcUsdDailyPricesSinceMstrFirstBuy(),
+    fetchBtcUsdSpotPrice(),
     fetchMicroStrategyBtcCostBasisHistory(),
   ]);
 
-  if (btcResult.status === "fulfilled") {
-    btcPoints = btcResult.value;
+  if (btcDailyResult.status === "fulfilled") {
+    btcPoints = btcDailyResult.value;
   } else {
-    const reason = btcResult.reason;
-    errorMessage =
+    const reason = btcDailyResult.reason;
+    btcWarning =
       reason instanceof Error
         ? reason.message
-        : "Failed to load Bitcoin price data.";
+        : "Failed to load Bitcoin price history (daily closes).";
+  }
+
+  if (btcSpotResult.status === "fulfilled") {
+    btcSpot = btcSpotResult.value;
   }
 
   if (treasuryResult.status === "fulfilled") {
@@ -1145,6 +1196,17 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
 
   const latestBtc = btcPoints?.length ? btcPoints[btcPoints.length - 1] : null;
   const firstBtc = btcPoints?.length ? btcPoints[0] : null;
+
+  if (!latestBtc && !btcSpot) {
+    errorMessage =
+      btcWarning ?? "Failed to load Bitcoin price data (spot + daily).";
+  }
+
+  const latestBtcForUi = btcSpot
+    ? { x: btcSpot.fetchedAtUtcMs, y: btcSpot.priceUsd, kind: "spot" as const }
+    : latestBtc
+    ? { x: latestBtc.x, y: latestBtc.y, kind: "daily_close" as const }
+    : null;
 
   const series: SvgLineChartSeries[] = [];
   if (btcPoints && btcPoints.length > 1) {
@@ -1182,8 +1244,8 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
       ? Math.floor((latestBtc.x - treasuryLatest.xUtcMs) / DAY_MS)
       : null;
 
-  if (latestBtc && treasuryLatest) {
-    premiumUsd = latestBtc.y - treasuryLatest.avgPurchasePriceUsd;
+  if (latestBtcForUi && treasuryLatest) {
+    premiumUsd = latestBtcForUi.y - treasuryLatest.avgPurchasePriceUsd;
     premiumPct = (premiumUsd / treasuryLatest.avgPurchasePriceUsd) * 100;
   }
 
@@ -1240,10 +1302,29 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
                 <p className="mt-2 text-sm text-red-700 dark:text-red-300">
                   {errorMessage}
                 </p>
-                <p className="mt-4 text-sm text-red-700/80 dark:text-red-300/80">
-                  Tip: This page depends on public data sources (Stooq and SEC
-                  EDGAR) that can occasionally rate‑limit or fail.
-                </p>
+	                <p className="mt-4 text-sm text-red-700/80 dark:text-red-300/80">
+	                  Tip: This page depends on public data sources (Coinbase,
+	                  Stooq, and SEC EDGAR) that can occasionally rate‑limit or
+	                  fail.
+	                </p>
+	              </div>
+	            </div>
+	          </div>
+        ) : null}
+
+        {!errorMessage && btcWarning ? (
+          <div className="mb-8 rounded-3xl border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-900 shadow-sm backdrop-blur-md dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-100">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5">
+                <Info className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="font-semibold">
+                  Bitcoin price history unavailable
+                </div>
+                <div className="mt-1 text-amber-900/80 dark:text-amber-100/80">
+                  {btcWarning}
+                </div>
               </div>
             </div>
           </div>
@@ -1267,18 +1348,33 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
           </div>
         ) : null}
 
-        {!errorMessage && latestBtc && treasuryLatest ? (
+        {!errorMessage && latestBtcForUi && treasuryLatest ? (
           <section className="mb-10 grid gap-4 md:mb-12 md:grid-cols-3">
             <div className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center gap-2 text-sm font-semibold text-secondary">
                 <span className="inline-flex h-2.5 w-2.5 rounded-full bg-amber-500" />
-                Bitcoin (latest)
+                Bitcoin{" "}
+                {latestBtcForUi.kind === "spot"
+                  ? "(spot)"
+                  : "(latest close)"}
               </div>
               <div className="mt-3 text-3xl font-bold tracking-tight">
-                {formatUsd(latestBtc.y)}
+                {formatUsd(latestBtcForUi.y)}
               </div>
               <div className="mt-1 text-sm text-secondary">
-                Data through {formatDateUtc(latestBtc.x)} (UTC)
+                {latestBtcForUi.kind === "spot" ? (
+                  <>
+                    Spot fetched {formatDateTimeUtc(latestBtcForUi.x)} (UTC)
+                    {latestBtc ? (
+                      <div className="mt-0.5 text-xs text-secondary/70">
+                        Latest close: {formatUsd(latestBtc.y, 0)} on{" "}
+                        {formatDateUtc(latestBtc.x)} (UTC)
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <>Data through {formatDateUtc(latestBtcForUi.x)} (UTC)</>
+                )}
               </div>
             </div>
 
@@ -1404,7 +1500,7 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
           </section>
         ) : null}
 
-        {!errorMessage && latestBtc && treasuryLatest ? (
+        {!errorMessage && latestBtcForUi && treasuryLatest ? (
           <section className="rounded-3xl border border-black/5 bg-background/60 p-8 text-sm leading-relaxed text-secondary shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
             <h2 className="text-base font-semibold text-foreground">
               Methodology & data sources
@@ -1414,7 +1510,8 @@ export default async function MicroStrategyBitcoinAveragePricePage() {
                 <span className="font-medium text-foreground">
                   Bitcoin price:
                 </span>{" "}
-                Stooq BTCUSD daily close (USD).
+                Coinbase BTC-USD spot (USD) for the “spot” card (when available),
+                and Stooq BTCUSD daily close (USD) for the historical series.
               </li>
               <li>
                 <span className="font-medium text-foreground">

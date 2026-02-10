@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -15,6 +16,8 @@ type Wallet = {
   backup: string;
   priceTier: "$" | "$$" | "$$$";
   summary: string;
+  image: string;
+  imageAlt: string;
 };
 
 const picks: Wallet[] = [
@@ -28,6 +31,8 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Latest Trezor flagship with modern hardware security and a premium on-device experience.",
+    image: "/wallets/trezor-safe-7.png",
+    imageAlt: "Trezor Safe 7 hardware wallet",
   },
   {
     rank: 2,
@@ -39,6 +44,8 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Latest Ledger Nano model for users who want touch navigation in a compact format.",
+    image: "/wallets/ledger-nano-gen5.webp",
+    imageAlt: "Ledger Nano Gen5 hardware wallet",
   },
   {
     rank: 3,
@@ -50,6 +57,8 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Modern Ledger touchscreen with easy review/sign flow and strong mobile usability.",
+    image: "/wallets/ledger-flex.webp",
+    imageAlt: "Ledger Flex hardware wallet",
   },
   {
     rank: 4,
@@ -61,6 +70,8 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Strong Trezor option if you want a premium touchscreen and mature backup flow.",
+    image: "/wallets/trezor-safe-5.png",
+    imageAlt: "Trezor Safe 5 hardware wallet",
   },
   {
     rank: 5,
@@ -72,6 +83,8 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Flagship Ledger device with larger display for easier address and transaction review.",
+    image: "/wallets/ledger-stax.webp",
+    imageAlt: "Ledger Stax hardware wallet",
   },
 ];
 
@@ -232,10 +245,22 @@ export default function BestHardwareWalletsPage() {
             </p>
             <ol className="mt-6 divide-y divide-black/10 border-y border-black/10 dark:divide-white/15 dark:border-white/15">
               {picks.map((wallet) => (
-                <li key={wallet.name} className="grid gap-5 py-6 md:grid-cols-[80px_1fr]">
+                <li
+                  key={wallet.name}
+                  className="grid gap-5 py-6 md:grid-cols-[80px_220px_1fr]"
+                >
                   <div className="text-4xl leading-none text-secondary [font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace]">
                     {String(wallet.rank).padStart(2, "0")}
                   </div>
+                  <figure className="overflow-hidden border border-black/10 bg-surface/50 dark:border-white/15">
+                    <Image
+                      src={wallet.image}
+                      alt={wallet.imageAlt}
+                      width={1200}
+                      height={720}
+                      className="h-40 w-full bg-surface/50 object-contain p-2 md:h-full"
+                    />
+                  </figure>
                   <div>
                     <h3 className="text-xl font-semibold tracking-tight">{wallet.name}</h3>
                     <p className="mt-2 text-sm text-secondary">{wallet.summary}</p>
@@ -280,7 +305,18 @@ export default function BestHardwareWalletsPage() {
                 <tbody className="divide-y divide-black/10 dark:divide-white/15">
                   {picks.map((wallet) => (
                     <tr key={wallet.name}>
-                      <td className="px-4 py-3 font-medium">{wallet.name}</td>
+                      <td className="px-4 py-3 font-medium">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={wallet.image}
+                            alt={wallet.imageAlt}
+                            width={96}
+                            height={58}
+                            className="h-10 w-16 border border-black/10 bg-surface/50 object-contain p-0.5 dark:border-white/15"
+                          />
+                          <span>{wallet.name}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-3 text-secondary">{wallet.bestFor}</td>
                       <td className="px-4 py-3 text-secondary">{wallet.connectivity}</td>
                       <td className="px-4 py-3 text-secondary">{wallet.priceTier}</td>

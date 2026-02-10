@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Shield, ChevronDown } from "lucide-react";
 
 const title = "Best Hardware Wallets for Crypto in 2026";
 const description =
@@ -194,93 +194,132 @@ export default function BestHardwareWalletsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <main className="mx-auto max-w-6xl px-6 py-12 md:py-24">
-        <Link
-          href="/"
-          className="mb-8 inline-flex items-center gap-2 text-sm text-secondary transition-colors hover:text-foreground md:mb-10"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
+    <div className="relative min-h-screen bg-background text-foreground transition-colors duration-300 selection:bg-blue-500/20">
+      {/* Background ambience */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -left-[20%] -top-[10%] h-[700px] w-[700px] rounded-full bg-blue-500/5 blur-[120px] dark:bg-blue-500/10" />
+        <div className="absolute -right-[15%] top-[30%] h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-[100px] dark:bg-violet-500/8" />
+        <div className="absolute -left-[10%] -bottom-[10%] h-[600px] w-[600px] rounded-full bg-cyan-500/5 blur-[100px] dark:bg-cyan-500/10" />
+      </div>
 
-        <article className="space-y-14">
-          <header className="border border-black/10 bg-background dark:border-white/15">
-            <div className="grid gap-8 p-7 md:grid-cols-[1.4fr_0.8fr] md:p-10">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-secondary">
-                  Hardware Wallet Guide
-                </p>
-                <h1 className="mt-5 max-w-4xl text-4xl leading-tight tracking-tight md:text-6xl md:leading-[1.05] [font-family:ui-serif,Georgia,Cambria,'Times_New_Roman',Times,serif]">
-                  Best Hardware Wallets for Crypto
-                </h1>
-                <p className="mt-5 max-w-2xl text-base leading-7 text-secondary md:text-lg">
-                  If you are searching for the best cold wallet, start with a
-                  hardware wallet shortlist that balances security, backups, and
-                  everyday usability. This page ranks strong options for 2026.
-                </p>
-              </div>
+      <main className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-24">
+        {/* Back button */}
+        <div className="mb-12">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/60 px-4 py-2 text-sm font-medium text-secondary shadow-sm backdrop-blur-md transition-all hover:border-blue-500/20 hover:bg-blue-500/10 hover:text-foreground dark:border-white/10 dark:bg-white/5"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Home
+          </Link>
+        </div>
 
-              <div className="border-t border-black/10 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0 dark:border-white/15">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-secondary">
-                  Selection Rules
-                </p>
-                <ul className="mt-4 space-y-3 text-sm leading-relaxed text-secondary">
-                  <li>1. Key isolation and signing model</li>
-                  <li>2. Recovery and backup quality</li>
-                  <li>3. Device and app reliability</li>
-                  <li>4. Practical fit for real workflows</li>
-                </ul>
-              </div>
+        <article className="space-y-12 md:space-y-16">
+          {/* Hero header */}
+          <header className="mb-2">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-700 backdrop-blur-md dark:text-blue-300">
+              <Shield className="h-3.5 w-3.5" />
+              <span>Hardware Wallet Guide &middot; 2026</span>
+            </div>
+
+            <h1 className="max-w-4xl text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+              Best{" "}
+              <span className="bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
+                Hardware Wallets
+              </span>{" "}
+              for Crypto
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-secondary md:text-lg">
+              If you are searching for the best cold wallet, start with a
+              hardware wallet shortlist that balances security, backups, and
+              everyday usability. This page ranks strong options for 2026.
+            </p>
+
+            {/* Selection criteria pills */}
+            <div className="mt-8 flex flex-wrap gap-2">
+              {[
+                "Key isolation & signing",
+                "Recovery & backup quality",
+                "Device reliability",
+                "Practical workflow fit",
+              ].map((rule) => (
+                <span
+                  key={rule}
+                  className="rounded-full border border-black/5 bg-surface/80 px-3 py-1.5 text-xs font-medium text-secondary backdrop-blur-sm dark:border-white/10 dark:bg-white/5"
+                >
+                  {rule}
+                </span>
+              ))}
             </div>
           </header>
 
+          {/* Wallet cards */}
           <section id="top-list">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              Top hardware wallet list
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+              Top picks
             </h2>
             <p className="mt-2 text-sm text-secondary">
               Updated for 2026 model releases, including the latest Trezor and
               Ledger devices.
             </p>
-            <ol className="mt-6 divide-y divide-black/10 border-y border-black/10 dark:divide-white/15 dark:border-white/15">
+
+            <ol className="mt-8 grid gap-5">
               {picks.map((wallet) => (
                 <li
                   key={wallet.name}
-                  className="grid gap-5 py-6 md:grid-cols-[80px_190px_1fr]"
+                  className="group rounded-3xl border border-black/5 bg-background/60 p-5 shadow-sm backdrop-blur-md transition-all hover:border-blue-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-blue-500/20 md:p-6"
                 >
-                  <div className="text-4xl leading-none text-secondary [font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace]">
-                    {String(wallet.rank).padStart(2, "0")}
-                  </div>
-                  <figure className="aspect-[4/5] w-full overflow-hidden border border-black/10 bg-surface/50 dark:border-white/15">
-                    <Image
-                      src={wallet.image}
-                      alt={wallet.imageAlt}
-                      width={1200}
-                      height={720}
-                      className="h-full w-full bg-surface/50 object-contain p-1"
-                    />
-                  </figure>
-                  <div>
-                    <h3 className="text-xl font-semibold tracking-tight">{wallet.name}</h3>
-                    <p className="mt-2 text-sm text-secondary">{wallet.summary}</p>
-                    <div className="mt-3 grid gap-2 text-sm text-secondary md:grid-cols-2">
-                      <p>
-                        Best for: <span className="text-foreground">{wallet.bestFor}</span>
+                  <div className="grid gap-5 md:grid-cols-[64px_180px_1fr]">
+                    {/* Rank */}
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 font-mono text-lg font-bold text-blue-600 dark:from-blue-500/20 dark:to-violet-500/20 dark:text-blue-400">
+                      #{wallet.rank}
+                    </div>
+
+                    {/* Image */}
+                    <figure className="aspect-[4/5] w-full overflow-hidden rounded-2xl border border-black/5 bg-surface/50 dark:border-white/10">
+                      <Image
+                        src={wallet.image}
+                        alt={wallet.imageAlt}
+                        width={1200}
+                        height={720}
+                        className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-[1.03]"
+                      />
+                    </figure>
+
+                    {/* Info */}
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-xl font-bold tracking-tight">
+                        {wallet.name}
+                      </h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-secondary">
+                        {wallet.summary}
                       </p>
-                      <p>
-                        Price tier: <span className="text-foreground">{wallet.priceTier}</span>
-                      </p>
-                      <p>
-                        Security: <span className="text-foreground">{wallet.security}</span>
-                      </p>
-                      <p>
-                        Connectivity:{" "}
-                        <span className="text-foreground">{wallet.connectivity}</span>
-                      </p>
-                      <p className="md:col-span-2">
-                        Backup: <span className="text-foreground">{wallet.backup}</span>
-                      </p>
+
+                      {/* Spec pills */}
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300">
+                          {wallet.bestFor}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-surface/80 px-2.5 py-1 text-xs font-medium text-secondary dark:bg-white/10">
+                          {wallet.connectivity}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-surface/80 px-2.5 py-1 text-xs font-medium text-secondary dark:bg-white/10">
+                          {wallet.priceTier}
+                        </span>
+                      </div>
+
+                      {/* Details grid */}
+                      <div className="mt-4 grid gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+                        <p className="text-secondary">
+                          <span className="font-medium text-foreground">Security:</span>{" "}
+                          {wallet.security}
+                        </p>
+                        <p className="text-secondary">
+                          <span className="font-medium text-foreground">Backup:</span>{" "}
+                          {wallet.backup}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -288,38 +327,48 @@ export default function BestHardwareWalletsPage() {
             </ol>
           </section>
 
+          {/* Comparison table */}
           <section>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               Quick comparison
             </h2>
-            <div className="mt-4 overflow-x-auto border border-black/10 dark:border-white/15">
+            <div className="mt-6 overflow-x-auto rounded-3xl border border-black/5 bg-background/60 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
               <table className="min-w-full text-left text-sm">
-                <thead className="border-b border-black/10 dark:border-white/15">
-                  <tr className="[font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace] text-[11px] uppercase tracking-[0.1em] text-secondary">
-                    <th className="px-4 py-3 font-medium">Wallet</th>
-                    <th className="px-4 py-3 font-medium">Best for</th>
-                    <th className="px-4 py-3 font-medium">Connectivity</th>
-                    <th className="px-4 py-3 font-medium">Price</th>
+                <thead>
+                  <tr className="border-b border-black/5 text-xs font-semibold uppercase tracking-wider text-secondary dark:border-white/10">
+                    <th className="px-5 py-4">Wallet</th>
+                    <th className="px-5 py-4">Best for</th>
+                    <th className="px-5 py-4">Connectivity</th>
+                    <th className="px-5 py-4">Price</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/10 dark:divide-white/15">
+                <tbody className="divide-y divide-black/5 dark:divide-white/10">
                   {picks.map((wallet) => (
-                    <tr key={wallet.name}>
-                      <td className="px-4 py-3 font-medium">
+                    <tr
+                      key={wallet.name}
+                      className="transition-colors hover:bg-blue-500/5"
+                    >
+                      <td className="px-5 py-4 font-medium">
                         <div className="flex items-center gap-3">
                           <Image
                             src={wallet.image}
                             alt={wallet.imageAlt}
                             width={96}
                             height={58}
-                            className="h-12 w-12 border border-black/10 bg-surface/50 object-contain p-0.5 dark:border-white/15"
+                            className="h-10 w-10 rounded-xl border border-black/5 bg-surface/50 object-contain p-0.5 dark:border-white/10"
                           />
                           <span>{wallet.name}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-secondary">{wallet.bestFor}</td>
-                      <td className="px-4 py-3 text-secondary">{wallet.connectivity}</td>
-                      <td className="px-4 py-3 text-secondary">{wallet.priceTier}</td>
+                      <td className="px-5 py-4 text-secondary">
+                        {wallet.bestFor}
+                      </td>
+                      <td className="px-5 py-4 text-secondary">
+                        {wallet.connectivity}
+                      </td>
+                      <td className="px-5 py-4 text-secondary">
+                        {wallet.priceTier}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -327,57 +376,76 @@ export default function BestHardwareWalletsPage() {
             </div>
           </section>
 
-          <section className="grid gap-8 border border-black/10 p-6 md:grid-cols-2 md:p-8 dark:border-white/15">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">How to choose</h2>
-              <ul className="mt-4 space-y-3 text-sm leading-relaxed text-secondary">
-                <li>1. Buy from official stores only.</li>
-                <li>2. Set up offline, then verify backup words by hand.</li>
-                <li>3. Use a passphrase if your threat model needs it.</li>
-                <li>4. Test recovery before storing meaningful value.</li>
+          {/* How to choose + FAQ */}
+          <section className="grid gap-6 md:grid-cols-2">
+            {/* How to choose card */}
+            <div className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-8">
+              <h2 className="text-xl font-bold tracking-tight">
+                How to choose
+              </h2>
+              <ul className="mt-5 space-y-4">
+                {[
+                  "Buy from official stores only.",
+                  "Set up offline, then verify backup words by hand.",
+                  "Use a passphrase if your threat model needs it.",
+                  "Test recovery before storing meaningful value.",
+                ].map((step, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm leading-relaxed text-secondary">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/10 to-violet-500/10 text-xs font-bold text-blue-600 dark:from-blue-500/20 dark:to-violet-500/20 dark:text-blue-400">
+                      {i + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
               </ul>
             </div>
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">FAQ</h2>
-              <div className="mt-4 grid gap-3">
+
+            {/* FAQ card */}
+            <div className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-8">
+              <h2 className="text-xl font-bold tracking-tight">FAQ</h2>
+              <div className="mt-5 grid gap-2">
                 {faq.map((item) => (
                   <details
                     key={item.q}
-                    className="border border-black/10 px-4 py-3 dark:border-white/15"
+                    className="group/faq rounded-2xl border border-black/5 px-4 py-3 transition-colors open:bg-blue-500/5 hover:border-blue-500/15 dark:border-white/10 dark:open:bg-blue-500/10 dark:hover:border-blue-500/20"
                   >
-                    <summary className="cursor-pointer list-none text-sm font-medium">
-                      {item.q}
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium">
+                      <span>{item.q}</span>
+                      <ChevronDown className="h-4 w-4 shrink-0 text-secondary transition-transform group-open/faq:rotate-180" />
                     </summary>
-                    <p className="mt-2 text-sm leading-relaxed text-secondary">{item.a}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-secondary">
+                      {item.a}
+                    </p>
                   </details>
                 ))}
               </div>
             </div>
           </section>
 
-          <section className="border border-black/10 p-6 md:p-8 dark:border-white/15">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+          {/* CTA section */}
+          <section className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-10">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               Secure storage first, tracking second
             </h2>
-            <p className="mt-3 max-w-2xl text-secondary leading-relaxed">
+            <p className="mt-3 max-w-2xl leading-relaxed text-secondary">
               Once long-term holdings are moved to hardware storage, track
               performance without exposing private keys in hot-wallet workflows.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/#download"
-                className="inline-flex w-full items-center justify-center border border-foreground px-5 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-violet-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg hover:brightness-110 sm:w-auto"
               >
                 Download the app
               </Link>
               <Link
                 href="/bitcoin-halving"
-                className="inline-flex w-full items-center justify-center border border-black/15 px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-foreground dark:border-white/20 sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full border border-black/10 bg-background/60 px-6 py-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur-md transition-all hover:border-blue-500/20 hover:bg-blue-500/10 dark:border-white/10 dark:bg-white/5 sm:w-auto"
               >
                 Read Bitcoin halving guide
               </Link>
             </div>
-            <p className="mt-4 text-xs text-secondary">
+            <p className="mt-6 text-xs text-secondary">
               Editorial note: educational content only, not financial advice.
             </p>
           </section>

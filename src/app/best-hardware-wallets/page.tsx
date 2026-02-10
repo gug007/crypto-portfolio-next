@@ -44,7 +44,7 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Latest Ledger Nano model for users who want touch navigation in a compact format.",
-    image: "/wallets/ledger-nano-gen5.webp",
+    image: "/wallets/ledger-nano-gen5.png",
     imageAlt: "Ledger Nano Gen5 hardware wallet",
   },
   {
@@ -57,7 +57,7 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Modern Ledger touchscreen with easy review/sign flow and strong mobile usability.",
-    image: "/wallets/ledger-flex.webp",
+    image: "/wallets/ledger-flex.png",
     imageAlt: "Ledger Flex hardware wallet",
   },
   {
@@ -83,7 +83,7 @@ const picks: Wallet[] = [
     priceTier: "$$$",
     summary:
       "Flagship Ledger device with larger display for easier address and transaction review.",
-    image: "/wallets/ledger-stax.webp",
+    image: "/wallets/ledger-stax.png",
     imageAlt: "Ledger Stax hardware wallet",
   },
 ];
@@ -247,18 +247,18 @@ export default function BestHardwareWalletsPage() {
               {picks.map((wallet) => (
                 <li
                   key={wallet.name}
-                  className="grid gap-5 py-6 md:grid-cols-[80px_220px_1fr]"
+                  className="grid gap-5 py-6 md:grid-cols-[80px_190px_1fr]"
                 >
                   <div className="text-4xl leading-none text-secondary [font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace]">
                     {String(wallet.rank).padStart(2, "0")}
                   </div>
-                  <figure className="overflow-hidden border border-black/10 bg-surface/50 dark:border-white/15">
+                  <figure className="aspect-[4/5] w-full overflow-hidden border border-black/10 bg-surface/50 dark:border-white/15">
                     <Image
                       src={wallet.image}
                       alt={wallet.imageAlt}
                       width={1200}
                       height={720}
-                      className="h-40 w-full bg-surface/50 object-contain p-2 md:h-full"
+                      className="h-full w-full bg-surface/50 object-contain p-1"
                     />
                   </figure>
                   <div>
@@ -312,7 +312,7 @@ export default function BestHardwareWalletsPage() {
                             alt={wallet.imageAlt}
                             width={96}
                             height={58}
-                            className="h-10 w-16 border border-black/10 bg-surface/50 object-contain p-0.5 dark:border-white/15"
+                            className="h-12 w-12 border border-black/10 bg-surface/50 object-contain p-0.5 dark:border-white/15"
                           />
                           <span>{wallet.name}</span>
                         </div>

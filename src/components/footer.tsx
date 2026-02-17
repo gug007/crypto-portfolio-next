@@ -41,6 +41,11 @@ export function Footer() {
                  </Link>
                </li>
                <li>
+                 <Link href="/best-hardware-wallets" className="hover:underline hover:text-foreground transition-colors">
+                   Best Hardware Wallets
+                 </Link>
+               </li>
+               <li>
                  <a href="#download" className="hover:underline hover:text-foreground transition-colors">
                    Download App
                  </a>

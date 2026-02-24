@@ -46,6 +46,11 @@ export function Footer() {
                  </Link>
                </li>
                <li>
+                 <Link href="/blockfolio-alternative" className="hover:underline hover:text-foreground transition-colors">
+                   Blockfolio Alternative
+                 </Link>
+               </li>
+               <li>
                  <a href="#download" className="hover:underline hover:text-foreground transition-colors">
                    Download App
                  </a>

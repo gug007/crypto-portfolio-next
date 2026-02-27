@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ArrowRight,
+  AlertTriangle,
   CalendarClock,
+  ChevronDown,
   Coins,
   Hash,
   Layers,
@@ -72,6 +75,25 @@ const halvings: HalvingRow[] = [
   { dateLabel: "Apr 2024", blockHeight: 840_000, subsidyFrom: 6.25, subsidyTo: 3.125 },
 ];
 
+const myths = [
+  {
+    title: "\u201CThe halving cuts my BTC in half.\u201D",
+    body: "False. Only new issuance to miners changes. Your wallet balance stays the same.",
+  },
+  {
+    title: "\u201CPrice will pump because of the halving.\u201D",
+    body: "Not guaranteed. Markets can price in expectations early, and many other factors matter (liquidity, macro, risk appetite).",
+  },
+  {
+    title: "\u201CHalving equals less security.\u201D",
+    body: "Not directly. Security depends on total mining incentives (subsidy + fees) and the competitive hashrate environment.",
+  },
+  {
+    title: "\u201CHalving reduces transaction fees.\u201D",
+    body: "Unrelated. Fees are driven by demand for block space, not the subsidy schedule.",
+  },
+];
+
 const faq = [
   {
     q: "What is the Bitcoin halving?",
@@ -91,9 +113,15 @@ const faq = [
   },
   {
     q: "Is the halving the same as transaction fees?",
-    a: "No. Miners earn (1) the block subsidy and (2) transaction fees. The halving only affects the subsidy—fees are set by users’ demand for block space.",
+    a: "No. Miners earn (1) the block subsidy and (2) transaction fees. The halving only affects the subsidy\u2014fees are set by users\u2019 demand for block space.",
   },
 ] as const;
+
+const howItWorksSteps = [
+  "Roughly every 10 minutes, the network targets a new block.",
+  "Miners compete to find a valid block (proof\u2011of\u2011work).",
+  "When the chain reaches a halving height (every 210,000 blocks), the subsidy in the block reward automatically halves.",
+];
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(value);
@@ -158,86 +186,104 @@ export default function BitcoinHalvingPage() {
         url: "https://crypto-portfolio-tracker.app/logo.png",
       },
     },
+    dateModified: new Date().toISOString(),
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <main className="mx-auto max-w-6xl px-6 py-12 md:py-28">
-        <Link
-          href="/"
-          className="text-secondary hover:text-foreground transition-colors mb-8 md:mb-10 inline-flex items-center gap-2 text-sm md:text-base"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
+    <div className="relative min-h-screen bg-background text-foreground transition-colors duration-300 selection:bg-amber-500/20">
+      {/* Background ambience */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -left-[20%] -top-[10%] h-[700px] w-[700px] rounded-full bg-amber-500/5 blur-[120px] dark:bg-amber-500/10" />
+        <div className="absolute -right-[15%] top-[40%] h-[500px] w-[500px] rounded-full bg-orange-500/5 blur-[100px] dark:bg-orange-500/8" />
+        <div className="absolute -left-[10%] -bottom-[10%] h-[600px] w-[600px] rounded-full bg-blue-500/5 blur-[100px] dark:bg-blue-500/10" />
+      </div>
 
-        <section className="relative isolate overflow-hidden">
-          {/* Background effects */}
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.100),white)] opacity-20 dark:bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.900),transparent)]" />
-          <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 sm:mr-28 md:mr-0 lg:mr-0 xl:mr-16 xl:origin-center dark:bg-transparent dark:shadow-none dark:ring-white/5" />
-          
-          <div className="relative py-8 md:py-20 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/50 px-4 py-1.5 text-xs font-medium text-secondary backdrop-blur-md shadow-sm dark:border-white/10 dark:bg-white/5 ring-1 ring-inset ring-black/5 dark:ring-white/5">
-              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-              <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent font-bold">Bitcoin Essentials</span>
-              <span className="text-secondary/60">•</span>
-              <span>A complete guide</span>
+      <main className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-24">
+        {/* Back button */}
+        <div className="mb-12">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/60 px-4 py-2 text-sm font-medium text-secondary shadow-sm backdrop-blur-md transition-all hover:border-amber-500/20 hover:bg-amber-500/10 hover:text-foreground dark:border-white/10 dark:bg-white/5"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Home
+          </Link>
+        </div>
+
+        <article className="space-y-14 md:space-y-20">
+          {/* ── Hero ── */}
+          <header className="text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 backdrop-blur-md dark:text-amber-300">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Bitcoin Essentials</span>
             </div>
 
-            <h1 className="mt-8 text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-7xl">
-              Bitcoin <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Halving</span>
+            <h1 className="max-w-4xl mx-auto text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+              Bitcoin{" "}
+              <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                Halving
+              </span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-base md:text-lg leading-7 md:leading-8 text-secondary">
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-secondary md:text-lg">
               The programmed event that cuts the{" "}
-              <span className="text-foreground font-semibold">block subsidy</span> in half
-              roughly every four years—slowing new issuance and redefining the
-              economics of digital scarcity.
+              <span className="font-semibold text-foreground">
+                block subsidy
+              </span>{" "}
+              in half roughly every four years — slowing new issuance and
+              redefining the economics of digital scarcity.
             </p>
 
             <div className="mt-12">
               <HalvingCountdown />
             </div>
 
-            <div className="mt-16 grid gap-6 sm:grid-cols-3">
-              <div className="group relative rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center justify-center sm:justify-start gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                    <Layers className="h-4 w-4" />
+            {/* Key stats */}
+            <div className="mt-16 grid gap-4 sm:grid-cols-3">
+              <div className="group rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md transition-all hover:border-blue-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-blue-500/20">
+                <div className="flex items-center justify-center gap-3 text-sm font-medium sm:justify-start">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/10 dark:from-blue-500/20 dark:to-blue-500/20">
+                    <Layers className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   Halving interval
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
-                  210,000 <span className="text-base font-normal text-secondary">blocks</span>
+                <div className="mt-4 text-3xl font-bold tracking-tight">
+                  210,000{" "}
+                  <span className="text-base font-normal text-secondary">
+                    blocks
+                  </span>
                 </div>
                 <p className="mt-2 text-sm text-secondary">
                   ~4 years (varies with block times)
                 </p>
               </div>
 
-              <div className="group relative rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center justify-center sm:justify-start gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                    <Coins className="h-4 w-4" />
+              <div className="group rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-emerald-500/20">
+                <div className="flex items-center justify-center gap-3 text-sm font-medium sm:justify-start">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/10 dark:from-emerald-500/20 dark:to-emerald-500/20">
+                    <Coins className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   Current subsidy
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
-                  {subsidyNow} <span className="text-base font-normal text-secondary">BTC</span>
+                <div className="mt-4 text-3xl font-bold tracking-tight">
+                  {subsidyNow}{" "}
+                  <span className="text-base font-normal text-secondary">
+                    BTC
+                  </span>
                 </div>
                 <p className="mt-2 text-sm text-secondary">
                   Since the April 2024 halving
                 </p>
               </div>
 
-              <div className="group relative rounded-3xl border border-black/5 bg-background/40 p-6 backdrop-blur-xl transition hover:bg-background/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <div className="flex items-center justify-center sm:justify-start gap-3 text-sm font-medium text-foreground">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                    <CalendarClock className="h-4 w-4" />
+              <div className="group rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md transition-all hover:border-purple-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-purple-500/20">
+                <div className="flex items-center justify-center gap-3 text-sm font-medium sm:justify-start">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/10 dark:from-purple-500/20 dark:to-purple-500/20">
+                    <CalendarClock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   Next halving
                 </div>
-                <div className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+                <div className="mt-4 text-3xl font-bold tracking-tight">
                   ~2028
                 </div>
                 <p className="mt-2 text-sm text-secondary">
@@ -245,124 +291,127 @@ export default function BitcoinHalvingPage() {
                 </p>
               </div>
             </div>
+          </header>
 
-
-          </div>
-        </section>
-
-        <section className="mt-14 flex flex-col gap-10">
-          <div className="space-y-4">
-            <h2
-              id="what-is-a-halving"
-              className="scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-            >
+          {/* ── What is the Bitcoin halving? ── */}
+          <section id="what-is-a-halving" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               What is the Bitcoin halving?
             </h2>
-            <p className="text-secondary leading-relaxed">
-              Bitcoin issues new coins through mining. When miners add a new
-              block to the blockchain, they earn a reward made up of{" "}
-              <span className="text-foreground/90">two parts</span>: the{" "}
-              <span className="text-foreground/90">block subsidy</span>{" "}
-              (newly created BTC) and transaction fees paid by users.
-            </p>
-            <p className="text-secondary leading-relaxed">
-              The{" "}
-              <span className="text-foreground/90">halving</span> is the
-              built‑in rule that reduces the subsidy by 50% every 210,000 blocks.
-              This schedule is one of the core mechanisms behind Bitcoin’s
-              capped supply (~21 million BTC).
-            </p>
-          </div>
+            <div className="mt-4 max-w-3xl space-y-4 text-secondary">
+              <p className="leading-relaxed">
+                Bitcoin issues new coins through mining. When miners add a new
+                block to the blockchain, they earn a reward made up of{" "}
+                <span className="font-medium text-foreground">two parts</span>:
+                the{" "}
+                <span className="font-medium text-foreground">
+                  block subsidy
+                </span>{" "}
+                (newly created BTC) and transaction fees paid by users.
+              </p>
+              <p className="leading-relaxed">
+                The{" "}
+                <span className="font-medium text-foreground">halving</span> is
+                the built&#8209;in rule that reduces the subsidy by 50% every
+                210,000 blocks. This schedule is one of the core mechanisms
+                behind Bitcoin&apos;s capped supply (~21 million BTC).
+              </p>
+            </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Hash className="h-4 w-4 text-accent" />
-                Predictable issuance
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-secondary">
-                The subsidy is known in advance and changes only at specific
-                block heights.
-              </p>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  icon: Hash,
+                  color: "amber",
+                  title: "Predictable issuance",
+                  text: "The subsidy is known in advance and changes only at specific block heights.",
+                },
+                {
+                  icon: Pickaxe,
+                  color: "orange",
+                  title: "Miner economics",
+                  text: "Revenue from new BTC per block drops\u2014fees and price matter more.",
+                },
+                {
+                  icon: TrendingUp,
+                  color: "blue",
+                  title: "Supply narrative",
+                  text: "New supply entering the market slows over time (not a guarantee of price outcomes).",
+                },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="group rounded-3xl border border-black/5 bg-background/60 p-5 shadow-sm backdrop-blur-md transition-all hover:border-amber-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-amber-500/20"
+                >
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20">
+                    <card.icon className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <h3 className="font-semibold tracking-tight">{card.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-secondary">
+                    {card.text}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Pickaxe className="h-4 w-4 text-accent" />
-                Miner economics
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-secondary">
-                Revenue from new BTC per block drops—fees and price matter more.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <TrendingUp className="h-4 w-4 text-accent" />
-                Supply narrative
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-secondary">
-                New supply entering the market slows over time (not a guarantee
-                of price outcomes).
-              </p>
-            </div>
-          </div>
+          </section>
 
-          <div className="space-y-4">
-            <h2
-              id="how-it-works"
-              className="scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-            >
+          {/* ── How it works ── */}
+          <section id="how-it-works" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               How it works (simple version)
             </h2>
-            <ol className="grid gap-3 text-secondary leading-relaxed">
-              <li className="rounded-2xl border border-black/5 bg-background/50 p-5 dark:border-white/10 dark:bg-background/20">
-                <span className="font-medium text-foreground">1)</span>{" "}
-                Roughly every 10 minutes, the network targets a new block.
-              </li>
-              <li className="rounded-2xl border border-black/5 bg-background/50 p-5 dark:border-white/10 dark:bg-background/20">
-                <span className="font-medium text-foreground">2)</span>{" "}
-                Miners compete to find a valid block (proof‑of‑work).
-              </li>
-              <li className="rounded-2xl border border-black/5 bg-background/50 p-5 dark:border-white/10 dark:bg-background/20">
-                <span className="font-medium text-foreground">3)</span>{" "}
-                When the chain reaches a halving height (every 210,000 blocks),
-                the subsidy in the block reward automatically halves.
-              </li>
-            </ol>
-            <div className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40">
-              <p className="text-sm leading-relaxed text-secondary">
-                Approximate issuance today:{" "}
-                <span className="font-medium text-foreground">
-                  {subsidyNow} BTC × {blocksPerDayApprox} blocks/day ≈{" "}
-                  {formatNumber(issuancePerDayApprox)} BTC/day
-                </span>
-                . Actual issuance varies with real block times and reorganizations.
+
+            <div className="mt-8 grid gap-4">
+              {howItWorksSteps.map((step, idx) => (
+                <div
+                  key={idx}
+                  className="group rounded-3xl border border-black/5 bg-background/60 p-5 shadow-sm backdrop-blur-md transition-all hover:border-amber-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-amber-500/20"
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 font-mono text-sm font-bold text-amber-600 dark:from-amber-500/20 dark:to-orange-500/20 dark:text-amber-400">
+                      {idx + 1}
+                    </span>
+                    <p className="text-sm leading-relaxed text-secondary">
+                      {step}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 dark:bg-amber-500/10">
+              <p className="text-sm font-medium leading-relaxed">
+                <span className="font-bold text-amber-700 dark:text-amber-300">
+                  Current issuance:
+                </span>{" "}
+                {subsidyNow} BTC &times; {blocksPerDayApprox} blocks/day &asymp;{" "}
+                {formatNumber(issuancePerDayApprox)} BTC/day. Actual issuance
+                varies with real block times and reorganizations.
               </p>
             </div>
-          </div>
+          </section>
 
-          <div className="space-y-4">
-            <h2
-              id="history"
-              className="scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-            >
-              Bitcoin halving dates & history
+          {/* ── History table ── */}
+          <section id="history" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+              Bitcoin halving dates &amp; history
             </h2>
-            <p className="text-secondary leading-relaxed">
-              Halvings are defined by block height (not a calendar date). Here’s
-              a quick timeline of the subsidy reductions so far:
+            <p className="mt-3 max-w-3xl text-secondary">
+              Halvings are defined by block height (not a calendar date).
+              Here&apos;s a quick timeline of the subsidy reductions so far:
             </p>
 
-            <div className="overflow-x-auto rounded-2xl border border-black/5 bg-background/50 dark:border-white/10 dark:bg-background/20">
-              <table className="w-full min-w-[760px] text-left text-sm">
-                <thead className="border-b border-black/5 bg-surface/60 text-secondary dark:border-white/10 dark:bg-surface/40">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Halving</th>
-                    <th className="px-5 py-3 font-medium">Block height</th>
-                    <th className="px-5 py-3 font-medium">Subsidy change</th>
-                    <th className="px-5 py-3 font-medium">Inflation / year</th>
+            <div className="mt-8 overflow-x-auto rounded-3xl border border-black/5 bg-background/60 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
+              <table className="min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-black/5 text-xs font-semibold uppercase tracking-wider text-secondary dark:border-white/10">
+                    <th className="px-5 py-4">Halving</th>
+                    <th className="px-5 py-4">Block Height</th>
+                    <th className="px-5 py-4">Subsidy Change</th>
+                    <th className="px-5 py-4">Inflation / Year</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-black/5 dark:divide-white/10">
                   {halvings.map((row, index) => {
                     const inflation = estimateAnnualInflationPercent(
                       row.blockHeight,
@@ -372,20 +421,20 @@ export default function BitcoinHalvingPage() {
                     return (
                       <tr
                         key={`${row.blockHeight}-${index}`}
-                        className="border-b border-black/5 last:border-0 dark:border-white/10"
+                        className="transition-colors hover:bg-amber-500/5"
                       >
-                        <td className="px-5 py-4 font-medium text-foreground">
+                        <td className="px-5 py-4 font-medium">
                           {row.dateLabel}
                         </td>
                         <td className="px-5 py-4 text-secondary">
                           {formatNumber(row.blockHeight)}
                         </td>
                         <td className="px-5 py-4 text-secondary">
-                          {row.subsidyFrom} → {row.subsidyTo} BTC
+                          {row.subsidyFrom} &rarr; {row.subsidyTo} BTC
                         </td>
                         <td className="px-5 py-4 text-secondary">
                           {inflation === null
-                            ? "—"
+                            ? "\u2014"
                             : `~${formatPercentPerYear(inflation)}`}
                         </td>
                       </tr>
@@ -400,19 +449,19 @@ export default function BitcoinHalvingPage() {
                     );
 
                     return (
-                      <tr className="dark:border-white/10">
-                        <td className="px-5 py-4 font-medium text-foreground">
+                      <tr className="transition-colors hover:bg-amber-500/5">
+                        <td className="px-5 py-4 font-medium">
                           ~2028 (expected)
                         </td>
                         <td className="px-5 py-4 text-secondary">
                           {formatNumber(nextHalvingHeight)}
                         </td>
                         <td className="px-5 py-4 text-secondary">
-                          3.125 → {nextSubsidy} BTC
+                          3.125 &rarr; {nextSubsidy} BTC
                         </td>
                         <td className="px-5 py-4 text-secondary">
                           {inflation === null
-                            ? "—"
+                            ? "\u2014"
                             : `~${formatPercentPerYear(inflation)}`}
                         </td>
                       </tr>
@@ -422,80 +471,58 @@ export default function BitcoinHalvingPage() {
               </table>
             </div>
 
-            <p className="text-xs leading-relaxed text-secondary">
-              Inflation/year is estimated using Bitcoin’s 10‑minute block target
-              (~52,560 blocks/year) and the scheduled subsidy after each halving.
+            <p className="mt-4 text-xs text-secondary/70">
+              Inflation/year is estimated using Bitcoin&apos;s 10&#8209;minute
+              block target (~52,560 blocks/year) and the scheduled subsidy after
+              each halving. Track the block height for the exact halving moment —
+              calendar dates vary by time zone.
             </p>
+          </section>
 
-            <p className="text-xs leading-relaxed text-secondary">
-              Tip: if you want the exact moment of a halving, track the block
-              height. Different time zones can make the calendar date look
-              different even though the halving happens once globally.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h2
-              id="myths"
-              className="scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-            >
+          {/* ── Myths ── */}
+          <section id="myths" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               Common halving myths
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {[
-                {
-                  title: "“The halving cuts my BTC in half.”",
-                  body: "False. Only new issuance to miners changes. Your wallet balance stays the same.",
-                },
-                {
-                  title: "“Price will pump because of the halving.”",
-                  body: "Not guaranteed. Markets can price in expectations early, and many other factors matter (liquidity, macro, risk appetite).",
-                },
-                {
-                  title: "“Halving equals less security.”",
-                  body: "Not directly. Security depends on total mining incentives (subsidy + fees) and the competitive hashrate environment.",
-                },
-                {
-                  title: "“Halving reduces transaction fees.”",
-                  body: "Unrelated. Fees are driven by demand for block space, not the subsidy schedule.",
-                },
-              ].map((item) => (
+
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {myths.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40"
+                  className="group rounded-3xl border border-black/5 bg-background/60 p-5 shadow-sm backdrop-blur-md transition-all hover:border-amber-500/15 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:border-amber-500/20"
                 >
-                  <h3 className="text-base font-semibold text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-secondary">
-                    {item.body}
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold tracking-tight">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-secondary">
+                        {item.body}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="space-y-4">
-            <h2
-              id="faq"
-              className="scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-            >
-              FAQ
+          {/* ── FAQ ── */}
+          <section id="faq" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+              Frequently Asked Questions
             </h2>
-            <div className="grid gap-3">
+            <div className="mt-8 grid gap-2">
               {faq.map((item) => (
                 <details
                   key={item.q}
-                  className="group rounded-2xl border border-black/5 bg-background/50 p-5 transition-colors dark:border-white/10 dark:bg-background/20"
+                  className="group/faq rounded-2xl border border-black/5 px-5 py-4 transition-colors open:bg-amber-500/5 hover:border-amber-500/15 dark:border-white/10 dark:open:bg-amber-500/10 dark:hover:border-amber-500/20"
                 >
-                  <summary className="cursor-pointer list-none text-sm font-medium text-foreground outline-none">
-                    <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      ?
-                    </span>
-                    {item.q}
-                    <span className="float-right text-secondary transition-transform group-open:rotate-45">
-                      +
-                    </span>
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium">
+                    <span>{item.q}</span>
+                    <ChevronDown className="h-4 w-4 shrink-0 text-secondary transition-transform group-open/faq:rotate-180" />
                   </summary>
                   <p className="mt-3 text-sm leading-relaxed text-secondary">
                     {item.a}
@@ -503,33 +530,38 @@ export default function BitcoinHalvingPage() {
                 </details>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="rounded-3xl border border-black/5 bg-surface/60 p-6 dark:border-white/10 dark:bg-surface/40 md:p-10">
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+          {/* ── CTA ── */}
+          <section className="rounded-3xl border border-black/5 bg-background/60 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-10">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               Track your crypto portfolio with clarity
             </h2>
-            <p className="mt-3 max-w-2xl text-secondary leading-relaxed">
-              If you’re building a long‑term view of your holdings, use a clean
-              tracker to stay organized across assets and exchanges—without the
-              spreadsheet chaos.
+            <p className="mt-3 max-w-2xl leading-relaxed text-secondary">
+              If you&apos;re building a long&#8209;term view of your holdings,
+              use a clean tracker to stay organized across assets and
+              exchanges — without the spreadsheet chaos.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/#download"
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-[color:var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg hover:brightness-110 sm:w-auto"
               >
-                Download the app
+                Download the App
+                <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/"
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-black/10 bg-background/60 px-5 py-3 text-sm font-medium text-foreground hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 dark:border-white/10 dark:bg-background/30"
+                className="inline-flex w-full items-center justify-center rounded-full border border-black/10 bg-background/60 px-6 py-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur-md transition-all hover:border-amber-500/20 hover:bg-amber-500/10 dark:border-white/10 dark:bg-white/5 sm:w-auto"
               >
                 Explore Crypto Portfolio
               </Link>
             </div>
-          </div>
-        </section>
+            <p className="mt-6 text-xs text-secondary/70">
+              Editorial note: educational content only, not financial advice.
+            </p>
+          </section>
+        </article>
 
         <script
           type="application/ld+json"

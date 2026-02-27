@@ -51,6 +51,11 @@ export function Footer() {
                  </Link>
                </li>
                <li>
+                 <Link href="/crypto-tax-guide" className="hover:underline hover:text-foreground transition-colors">
+                   Crypto Tax Guide
+                 </Link>
+               </li>
+               <li>
                  <a href="#download" className="hover:underline hover:text-foreground transition-colors">
                    Download App
                  </a>

@@ -44,5 +44,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    {
+      url: 'https://crypto-portfolio-tracker.app/crypto-tax-guide',
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.9,
+    },
   ]
 }
